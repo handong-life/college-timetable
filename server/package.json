@@ -12,12 +12,17 @@
     "dotenv": "^8.2.0",
     "express": "~4.16.1",
     "express-session": "^1.17.1",
+    "fs": "0.0.1-security",
+    "html-table-to-json": "^1.0.0",
     "http-errors": "~1.6.3",
+    "iconv-lite": "^0.6.2",
     "morgan": "~1.9.1",
     "mysql2": "^2.2.5",
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
     "pug": "2.0.0-beta11",
-    "sequelize": "^6.3.5"
+    "puppeteer": "^5.5.0",
+    "sequelize": "^6.3.5",
+    "tabletojson": "^2.0.4"
   }
 }
