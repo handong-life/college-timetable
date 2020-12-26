@@ -7,11 +7,18 @@ class User extends Model {
         email: DataTypes.TEXT,
       },
       {
-        tableName: 'user',
+        tableName: 'User',
         modelName: 'user',
         sequelize,
       },
     );
+  }
+  static associate(models) {
+    this.belongsToMany(models.lecture, { through: 'userLectureRelation' });
+    this.hasMany(models.timetable, {
+      foreignKey: 'userId',
+      targetKey: 'id',
+    });
   }
 }
 
