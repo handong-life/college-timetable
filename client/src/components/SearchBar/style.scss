@@ -2,7 +2,10 @@
   width: 100%;
   max-width: 584px;
   height: 44px;
+  margin-bottom: 15px;
+  border-radius: 10px;
 
+  
   .SearchBar {
     width: 100%;
     height: 100%;
@@ -46,6 +49,11 @@
       display: flex;
       font-size: 16px;
     }
+  }
+
+  &:hover {
+    border-color:rgba(223,225,229,0);
+    box-shadow: 0 1px 6px rgba(32,33,36,.28);
   }
 }
 
