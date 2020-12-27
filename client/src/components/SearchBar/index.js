@@ -21,7 +21,7 @@ export default function SearchBar({ initialSearch = '', onSearchSubmit }) {
         <input
           className="SearchInput"
           name="search"
-          placeholder="강의명, 학과, 교수, 과목코드, 시간(ex. 화8)"
+          placeholder="강의명, 교수, 학부, 과목코드, 시간(ex. 화8)"
           value={search}
           ref={inputRef}
           onChange={(e) => setSearch(e.target.value)}
