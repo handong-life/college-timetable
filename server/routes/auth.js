@@ -3,6 +3,7 @@ const router = Router();
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/user');
+const Timetable = require('../models/timetable');
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env;
 
 passport.serializeUser((user, done) => {
@@ -23,15 +24,18 @@ passport.use(
       if (!profile) return next('err', null);
 
       User.findOne({ where: { email: profile.emails[0].value } }).then(async (user) => {
-        const { name, email, imageUrl } =
-          user ??
-          (await User.create({
+        if (user) {
+          const { name, email, imageUrl } = user;
+          return next(null, { name, email, imageUrl });
+        } else {
+          const { id, name, email, imageUrl } = await User.create({
             name: profile.displayName,
             email: profile.emails[0].value,
             imageUrl: profile.photos[0].value,
-          }));
-
-        return next(null, { name, email, imageUrl });
+          });
+          await Timetable.create({ userId: id, name: '예비시간표1' });
+          return next(null, { name, email, imageUrl });
+        }
       });
     },
   ),
@@ -39,7 +43,11 @@ passport.use(
 
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) return next();
-  throw createError(401, 'Auth Error');
+  // for testing
+  req.user = { id: 1 };
+  console.log('hi');
+  return next();
+  // throw createError(401, 'Auth Error');
 }
 
 router.get(
