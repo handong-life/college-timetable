@@ -23,25 +23,17 @@
     }
 
     .Body {
+        display: flex;
         width: 100%;
         height: 100%;
         padding: 30px;
-
-        display: flex;
         overflow: hidden;
 
-        
-        
-        .SearchTab {
-            background-color: white;
-            margin-right: 30px;
-            width: 600px;
-            padding: 20px;
-            border: 1px solid var(--swatch_9);
-            border-radius: 20px;
-            height: 100%;
+        .SearchTabWrapper {
             display: flex;
             flex-direction: column;
+            min-width: 600px;
+            overflow: hidden;
 
             .TabBar {
                 width: 100%;
@@ -70,99 +62,41 @@
                 }
             }
             
-
-            .Title {
-                margin-bottom: 10px;
-                font-size: 20px;
-                font-weight: 600;
-                width: 100%;
-                text-align: left;
-            }
-
-            .SearchResult {
-                height: 200px;
-            }
-            
-        }
-
-        .TimetableTab {
-            height: 100%;
-            flex: 1;
-            min-width: 500px;
-            display: flex;
-            overflow-y: hidden;
-
-            .Timetable {
-                flex: 1;
-                width: 100%;
+            .SearchTab {
+                background-color: white;
+                margin-right: 30px;
+                padding: 20px 20px 0 20px;
+                border: 1px solid var(--swatch_9);
+                border-radius: 20px;
                 height: 100%;
-
                 display: flex;
                 flex-direction: column;
-                background-color: white;
                 overflow-y: hidden;
-
-
-                .TimetableHeader {
+                
+                .Title {
+                    margin-bottom: 10px;
+                    font-size: 20px;
+                    font-weight: 600;
                     width: 100%;
-                    height: 50px;
-                    display: grid;
-                    border-top-left-radius: 15px;
-                    border-top-right-radius: 15px;
-                    grid-template-rows: repeat(1, 1fr);
-                    grid-template-columns: 0.5fr repeat(6, minmax(auto, 1fr));
-                    border-top: 1px solid var(--swatch_9);
-                    border-left: 1px solid var(--swatch_9);
-                    background-color:  var(--swatch_9);
-
-                    .DayIndicator {
-                        display: flex;
-                        height: 100%;
-                        justify-content: center;
-                        align-items: center;
-                        font-size: 15px;
-                        font-weight: 700;
-                    }
+                    text-align: left;
                 }
 
-                .TimetableBody {
-                    width: 100%;
+                .LectureList {
                     height: 100%;
-                    display: grid;
-                    overflow-y: scroll;
-                    grid-template-columns: 0.5fr repeat(6, minmax(auto, 1fr));
-                    border-top: 1px solid var(--swatch_9);
-                    border-left: 1px solid var(--swatch_9);
-                    
-                    .PeriodIndicator {
-                        display: flex;
-                        height: 100%;
-                        justify-content: center;
-                        align-items: center;
-                        border-right: 1px solid var(--swatch_9);
-                        border-bottom: 1px solid var(--swatch_9);
-                        font-size: 16px;
-                        font-weight: 600;
-                    }
-
-                    .PeriodGrid {
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: space-between;
-                        border-bottom: 1px solid var(--swatch_9);
-                        border-right: 1px solid var(--swatch_9);
-                        width: 100%;
-                        height: 80px;
-                        font-weight: 600;
-                        font-size: 14px;
-                        line-height: 16px;
-                    }
+                    width: 100%;
+                    padding: 5px;
+                    overflow-y: scroll; 
                 }
                 
             }
         }
 
-        
+        .TimetableTab {
+            height: 100%;
+            flex: 1;
+            display: flex;
+            overflow-y: hidden;
+            border-bottom: 1px solid var(--swatch_9);
+        }
     }
-    
 }
