@@ -20,7 +20,7 @@ export default function TimetablePage({ location }) {
   }, []);
 
   useEffect(() => {
-    if (search.length != 0) {
+    if (search.length !== 0) {
       axios.get(`${SERVERURL}/api/lecture/search?search=${search}`).then((res) =>
         setSearchResults(
           res.data.map((lecture) => ({
@@ -34,22 +34,23 @@ export default function TimetablePage({ location }) {
 
   const onBookmarkClick = (lecture) => {
     axios.post(`${SERVERURL}/api/lecture/bookmark/${lecture.id}`).then((res) => {
-      console.log(res.data);
+      setBookmarks([...bookmarks, lecture]);
       const id = searchResults.findIndex((result) => result.id === lecture.id);
+      if (id === -1) return;
       const newSearchResults = [...searchResults];
       newSearchResults[id].isBookmarked = true;
       setSearchResults(newSearchResults);
-      setBookmarks([...bookmarks, lecture]);
     });
   };
 
   const onUnbookmarkClick = (lecture) => {
     axios.delete(`${SERVERURL}/api/lecture/bookmark/${lecture.id}`).then((res) => {
+      setBookmarks([...bookmarks.filter((bookmark) => bookmark.id != lecture.id)]);
       const id = searchResults.findIndex((result) => result.id === lecture.id);
+      if (id === -1) return;
       const newSearchResults = [...searchResults];
       newSearchResults[id].isBookmarked = false;
       setSearchResults(newSearchResults);
-      setBookmarks([...bookmarks.filter((bookmark) => bookmark.id != lecture.id)]);
     });
   };
 
@@ -61,7 +62,7 @@ export default function TimetablePage({ location }) {
     <div className="TimetablePage">
       <div className="Header">
         <div className="Icon">🗓</div>
-        <div className="TimetableTitle">예비시간표1</div>
+        <div className="TimetableTitle">대학시간</div>
       </div>
       <div className="Body">
         <div className="SearchTabWrapper">
