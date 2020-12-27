@@ -2,19 +2,60 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 import './style.scss';
-import { SearchBar } from '../../components';
+import { SearchBar, LectureCard, Timetable } from '../../components';
 import { SERVERURL } from '../../commons/constants';
 
 export default function TimetablePage({ location }) {
   const [search, setSearch] = useState('');
+  const [selectedTapIndex, setSelectedTapIndex] = useState(0);
   const [searchResults, setSearchResults] = useState([]);
+  const [bookmarks, setBookmarks] = useState([]);
+
+  const tabs = ['강의 검색', '강의 즐겨찾기'];
 
   useEffect(() => {
-    axios.get(`${SERVERURL}/api/lecture/search?search=${search}`).then((res) => {
-      console.log(res.data);
-      setSearchResults(res.data);
+    axios.get(`${SERVERURL}/api/lecture/bookmark`).then((res) => {
+      setBookmarks(res.data.map((lecture) => ({ ...lecture, isBookmarked: true })));
     });
+  }, []);
+
+  useEffect(() => {
+    if (search.length != 0) {
+      axios.get(`${SERVERURL}/api/lecture/search?search=${search}`).then((res) =>
+        setSearchResults(
+          res.data.map((lecture) => ({
+            ...lecture,
+            isBookmarked: bookmarks.find((bookmark) => bookmark.id === lecture.id),
+          })),
+        ),
+      );
+    }
   }, [search]);
+
+  const onBookmarkClick = (lecture) => {
+    axios.post(`${SERVERURL}/api/lecture/bookmark/${lecture.id}`).then((res) => {
+      console.log(res.data);
+      const id = searchResults.findIndex((result) => result.id === lecture.id);
+      const newSearchResults = [...searchResults];
+      newSearchResults[id].isBookmarked = true;
+      setSearchResults(newSearchResults);
+      setBookmarks([...bookmarks, lecture]);
+    });
+  };
+
+  const onUnbookmarkClick = (lecture) => {
+    axios.delete(`${SERVERURL}/api/lecture/bookmark/${lecture.id}`).then((res) => {
+      const id = searchResults.findIndex((result) => result.id === lecture.id);
+      const newSearchResults = [...searchResults];
+      newSearchResults[id].isBookmarked = false;
+      setSearchResults(newSearchResults);
+      setBookmarks([...bookmarks.filter((bookmark) => bookmark.id != lecture.id)]);
+    });
+  };
+
+  const onAddClick = (lecture) => {
+    bookmarks.find((id) => id === lecture.id);
+  };
 
   return (
     <div className="TimetablePage">
@@ -23,92 +64,51 @@ export default function TimetablePage({ location }) {
         <div className="TimetableTitle">예비시간표1</div>
       </div>
       <div className="Body">
-        <div className="SearchTab">
+        <div className="SearchTabWrapper">
           <div className="TabBar">
-            <div className="Chip selected">강의 검색</div>
-            <div className="Chip">강의 즐겨찾기</div>
+            {tabs.map((tab, index) => (
+              <div
+                key={index}
+                className={`Chip ${selectedTapIndex === index && 'selected'}`}
+                onClick={() => setSelectedTapIndex(index)}
+              >
+                {tab}
+              </div>
+            ))}
           </div>
-          <SearchBar onSearchSubmit={(search) => setSearch(search)} />
-          <div className="SearchResult"></div>
+          <div className="SearchTab">
+            {selectedTapIndex === 0 ? (
+              <>
+                <SearchBar onSearchSubmit={(search) => setSearch(search)} />
+                <div className="LectureList">
+                  {searchResults.map((lecture) => (
+                    <LectureCard
+                      key={lecture.id}
+                      lecture={lecture}
+                      onAddClick={() => onAddClick(lecture)}
+                      onBookmarkClick={() => onBookmarkClick(lecture)}
+                      onUnbookmarkClick={() => onUnbookmarkClick(lecture)}
+                    />
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="LectureList">
+                {bookmarks.map((lecture) => (
+                  <LectureCard
+                    key={lecture.id}
+                    lecture={lecture}
+                    onAddClick={() => onAddClick(lecture)}
+                    onUnbookmarkClick={() => onUnbookmarkClick(lecture)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
+
         <div className="TimetableTab">
-          <div className="TimetableSidebar"></div>
-          <div className="Timetable">
-            <div className="TimetableHeader">
-              <div className="DayIndicator"></div>
-              <div className="DayIndicator">월</div>
-              <div className="DayIndicator">화</div>
-              <div className="DayIndicator">수</div>
-              <div className="DayIndicator">목</div>
-              <div className="DayIndicator">금</div>
-              <div className="DayIndicator">토</div>
-            </div>
-            <div className="TimetableBody">
-              <div className="PeriodIndicator">1</div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodIndicator">2</div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodIndicator">3</div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodIndicator">4</div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodIndicator">5</div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodIndicator">6</div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodIndicator">7</div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodIndicator">8</div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodIndicator">9</div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-              <div className="PeriodGrid"></div>
-            </div>
-          </div>
+          <Timetable />
         </div>
       </div>
     </div>
