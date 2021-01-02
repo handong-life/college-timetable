@@ -3,24 +3,6 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    
-    .Header {
-        padding: 30px;
-        height: 80px;
-        background-color: white; 
-        display: flex;
-        align-items: center;
-        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-        font-size: 25px;
-        font-weight: 700;
-
-        .Icon {
-            font-size: 40px;
-            margin-right: 20px;
-            cursor: pointer;
-        }
-
-    }
 
     .Body {
         display: flex;
@@ -66,7 +48,7 @@
                 background-color: white;
                 margin-right: 30px;
                 padding: 20px 20px 0 20px;
-                border: 1px solid var(--swatch_9);
+                border: 1px solid #eaedf1;
                 border-radius: 20px;
                 height: 100%;
                 display: flex;
@@ -96,7 +78,7 @@
             flex: 1;
             display: flex;
             overflow-y: hidden;
-            border-bottom: 1px solid var(--swatch_9);
+            border-bottom: 1px solid #eaedf1;
         }
     }
 }

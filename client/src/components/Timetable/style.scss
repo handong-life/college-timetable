@@ -16,9 +16,9 @@
       border-top-right-radius: 15px;
       grid-template-rows: repeat(1, 1fr);
       grid-template-columns: 0.5fr repeat(6, minmax(auto, 1fr));
-      border-top: 1px solid var(--swatch_9);
-      border-left: 1px solid var(--swatch_9);
-      background-color:  var(--swatch_9);
+      border-top: 1px solid #eaedf1;
+      border-left: 1px solid #eaedf1;
+      background-color: #eaedf1;
 
       .DayIndicator {
           display: flex;
@@ -36,16 +36,16 @@
       display: grid;
       overflow-y: scroll;
       grid-template-columns: 0.5fr repeat(6, minmax(auto, 1fr));
-      border-top: 1px solid var(--swatch_9);
-      border-left: 1px solid var(--swatch_9);
+      border-top: 1px solid #eaedf1;
+      border-left: 1px solid #eaedf1;
       
       .PeriodIndicator {
           display: flex;
           height: 100%;
           justify-content: center;
           align-items: center;
-          border-right: 1px solid var(--swatch_9);
-          border-bottom: 1px solid var(--swatch_9);
+          border-right: 1px solid #eaedf1;
+          border-bottom: 1px solid #eaedf1;
           font-size: 16px;
           font-weight: 600;
       }
@@ -54,8 +54,8 @@
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-          border-bottom: 1px solid var(--swatch_9);
-          border-right: 1px solid var(--swatch_9);
+          border-bottom: 1px solid #eaedf1;
+          border-right: 1px solid #eaedf1;
           width: 100%;
           height: 80px;
           font-weight: 600;

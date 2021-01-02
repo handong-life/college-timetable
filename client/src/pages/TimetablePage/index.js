@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 import './style.scss';
-import { SearchBar, LectureCard, Timetable } from '../../components';
+import { SearchBar, LectureCard, Timetable, TopBar } from '../../components';
 import { SERVERURL } from '../../commons/constants';
 
 export default function TimetablePage({ location }) {
@@ -60,10 +60,7 @@ export default function TimetablePage({ location }) {
 
   return (
     <div className="TimetablePage">
-      <div className="Header">
-        <div className="Icon">🗓</div>
-        <div className="TimetableTitle">대학시간</div>
-      </div>
+      <TopBar />
       <div className="Body">
         <div className="SearchTabWrapper">
           <div className="TabBar">
