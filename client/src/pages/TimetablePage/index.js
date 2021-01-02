@@ -6,7 +6,7 @@ import { SearchBar, LectureCard, Timetable, TopBar } from '../../components';
 import { SERVERURL } from '../../commons/constants';
 
 export default function TimetablePage({ location }) {
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState('김호준');
   const [selectedTapIndex, setSelectedTapIndex] = useState(0);
   const [searchResults, setSearchResults] = useState([]);
   const [bookmarks, setBookmarks] = useState([]);
