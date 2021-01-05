@@ -51,10 +51,12 @@ const theme = createMuiTheme({
     h2: {
       fontSize: '1.714rem',
       fontWeight: '700',
+      textAlign: 'start',
     },
     h3: {
       fontSize: '1.286rem',
       fontWeight: '700',
+      textAlign: 'start',
     },
     h6: {
       fontSize: '1.143rem',
@@ -63,10 +65,12 @@ const theme = createMuiTheme({
     body1: {
       fontSize: '1rem',
       fontWeight: 'normal',
+      textAlign: 'start',
     },
     body2: {
       fontSize: '1rem',
       fontWeight: '600',
+      textAlign: 'start',
     },
     caption: {
       fontSize: '0.75rem',

@@ -35,7 +35,7 @@ export default function TopBar() {
       <Typography variant={'h1'} className={classes.icon}>
         🗓
       </Typography>
-      <Typography variant={'h1'}>대학시간</Typography>
+      <Typography variant={'h2'}>대학시간</Typography>
     </AppBar>
   );
 }
