@@ -5,11 +5,11 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import BookmarkIcon from '@material-ui/icons/Bookmark';
 import AddIcon from '@material-ui/icons/Add';
-// import DeleteIcon from '@material-ui/icons/Delete';
+import DeleteIcon from '@material-ui/icons/Delete';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 
 const useStyles = makeStyles((theme) => ({
-  lectureCard: {
+  root: {
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
@@ -39,6 +39,7 @@ const useStyles = makeStyles((theme) => ({
 
   title: {
     marginRight: '5px',
+    textAlign: 'left',
   },
 
   item: {
@@ -66,10 +67,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function LectureCard({ lecture, onAddClick, onBookmarkClick, onUnbookmarkClick }) {
+export default function LectureCard({
+  lecture,
+  onAddClick,
+  onDeleteClick,
+  onBookmarkClick,
+  onUnbookmarkClick,
+}) {
   const classes = useStyles();
   return (
-    <Box className={classes.lectureCard} id={lecture.id}>
+    <Box className={classes.root} id={lecture.id}>
       <Box className={classes.column}>
         <Box className={classes.row}>
           <Typography className={classes.item} variant="h3">
@@ -93,12 +100,14 @@ export default function LectureCard({ lecture, onAddClick, onBookmarkClick, onUn
         </Box>
       </Box>
       <Box className={classes.buttonGroup}>
-        <IconButton onClick={onAddClick}>
-          <AddIcon />
+        <IconButton onClick={lecture.isAdded ? onDeleteClick : onAddClick}>
+          {lecture.isAdded ? <DeleteIcon /> : <AddIcon />}
         </IconButton>
-        <IconButton onClick={lecture.isBookmarked ? onUnbookmarkClick : onBookmarkClick}>
-          {lecture.isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-        </IconButton>
+        {!lecture.isAdded && (
+          <IconButton onClick={lecture.isBookmarked ? onUnbookmarkClick : onBookmarkClick}>
+            {lecture.isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+          </IconButton>
+        )}
       </Box>
     </Box>
   );
