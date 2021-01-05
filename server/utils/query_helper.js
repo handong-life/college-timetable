@@ -6,7 +6,7 @@ exports.searchWhereClause = (search) => {
     [Op.and]: {
       [Op.or]: searchAttributes.map((attributes) => ({
         [attributes]: {
-          [Op.like]: '%' + word + '%',
+          [Op.like]: '%' + word.trim() + '%',
         },
       })),
     },
