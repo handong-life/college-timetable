@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Tabs, Tab, Box, Typography } from '@material-ui/core';
 import SearchBar from './SearchBar';
@@ -34,10 +34,6 @@ const useStyles = makeStyles((theme) => ({
 
   searchBarWrapper: {
     width: '100%',
-    marginBottom: '20px',
-    [theme.breakpoints.down('sm')]: {
-      marginBottom: '5px',
-    },
   },
 
   lectureList: {
@@ -98,6 +94,7 @@ export default function SearchSection({
       </Box>
       <Tabs
         className={classes.searchTabs}
+        indicatorColor="secondary"
         value={selectedSearchTabIndex}
         onChange={handleSelectedSearchTabIndex}
         aria-label="Search Tabs"

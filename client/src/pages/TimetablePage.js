@@ -6,10 +6,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 
-import { Lecture } from '../models';
-import { TopBar, Modal, SearchSection, TimetableSection } from '../components';
 import { SERVERURL } from '../commons/constants';
-import Timetable from '../models/Timetable';
+import { Lecture, Timetable } from '../models';
+import { TopBar, Modal, SearchSection, TimetableSection } from '../components';
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -84,6 +83,7 @@ export default function TimetablePage({ authenticated, logout }) {
       ),
     );
   };
+
   const getTimetable = () => {
     axios
       .get(`${SERVERURL}/api/timetable/${timetables[selectedTimetableIndex].id}`)

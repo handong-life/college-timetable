@@ -1,8 +1,7 @@
 import React from 'react';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import Box from '@material-ui/core/Box';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
+import { Box, IconButton, Tooltip, Typography } from '@material-ui/core';
+
 import BookmarkIcon from '@material-ui/icons/Bookmark';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -101,11 +100,27 @@ export default function LectureCard({
       </Box>
       <Box className={classes.buttonGroup}>
         <IconButton onClick={lecture.isAdded ? onDeleteClick : onAddClick}>
-          {lecture.isAdded ? <DeleteIcon /> : <AddIcon />}
+          {lecture.isAdded ? (
+            <Tooltip title="현재 시간표에서 삭제" arrow>
+              <DeleteIcon />
+            </Tooltip>
+          ) : (
+            <Tooltip title="현재 시간표에 추가" arrow>
+              <AddIcon />
+            </Tooltip>
+          )}
         </IconButton>
         {!lecture.isAdded && (
           <IconButton onClick={lecture.isBookmarked ? onUnbookmarkClick : onBookmarkClick}>
-            {lecture.isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+            {lecture.isBookmarked ? (
+              <Tooltip title="즐겨찾기 삭제" arrow>
+                <BookmarkIcon />
+              </Tooltip>
+            ) : (
+              <Tooltip title="즐겨찾기 추가" arrow>
+                <BookmarkBorderIcon />
+              </Tooltip>
+            )}
           </IconButton>
         )}
       </Box>

@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import Box from '@material-ui/core/Box';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-
-import Typography from '@material-ui/core/Typography';
+import React from 'react';
 import makeStyles from '@material-ui/core/styles/makeStyles';
+import { Box, IconButton, ButtonGroup, Tabs, Tab, Typography, Tooltip } from '@material-ui/core';
+
+import AddIcon from '@material-ui/icons/Add';
+import CreateIcon from '@material-ui/icons/Create';
+import DeleteIcon from '@material-ui/icons/Delete';
 import LectureGrid from './LectureGrid';
 
 const useStyles = makeStyles((theme) => ({
@@ -13,21 +13,35 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: 'white',
     overflowY: 'hidden',
     borderBottom: '1px solid #eaedf1',
   },
 
   header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+
+  tabs: {
+    width: '100%',
+  },
+
+  buttonGroup: {
+    borderRadius: '23px',
+    backgroundColor: 'white',
+    marginBottom: '5px',
+  },
+
+  timetableHeader: {
     width: '100%',
     height: '50px',
     display: 'grid',
-    borderTopLeftRadius: '15px',
-    borderTopRightRadius: '15px',
     gridTemplateRows: 'repeat(1, 1fr)',
     gridTemplateColumns: '0.5fr repeat(6, minmax(auto, 1fr))',
     borderTop: '1px solid #eaedf1',
     borderLeft: '1px solid #eaedf1',
+    borderTopLeftRadius: '15px',
+    borderTopRightRadius: '15px',
     backgroundColor: '#eaedf1',
   },
 
@@ -39,6 +53,7 @@ const useStyles = makeStyles((theme) => ({
     gridTemplateColumns: '0.5fr repeat(6, minmax(auto, 1fr))',
     borderTop: '1px solid #eaedf1',
     borderLeft: '1px solid #eaedf1',
+    backgroundColor: 'white',
   },
 
   dayIndicator: {
@@ -69,26 +84,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`scrollable-auto-tabpanel-${index}`}
-      aria-labelledby={`scrollable-auto-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
 function a11yProps(index) {
   return {
     id: `scrollable-auto-tab-${index}`,
@@ -96,23 +91,26 @@ function a11yProps(index) {
   };
 }
 
-const getLecturesForTT = (lectures = []) => {
-  const lecturesForTT = {};
+const getLecturesForTimetable = (lectures = []) => {
+  const lecturesForTimetable = {};
   lectures.forEach((lecture) =>
-    lecture.period.split(',').forEach((period) => (lecturesForTT[period] = lecture)),
+    lecture.period.split(',').forEach((period) => (lecturesForTimetable[period] = lecture)),
   );
-  return lecturesForTT;
+  return lecturesForTimetable;
 };
 
 export default function TimetableSection({
   timetables,
   lectures,
   selectedIndex,
-  handleTimetableChange,
+  handleSelectedTimetableIndexChange,
+  handleTimetableCreate,
+  handleTimetableDelete,
+  handleTimetableEdit,
 }) {
   const TIMETABLE_DAYS = ['', '월', '화', '수', '목', '금', '토'];
   const classes = useStyles();
-  const lecturesForTT = getLecturesForTT(lectures);
+  const lecturesForTimetable = getLecturesForTimetable(lectures);
 
   const PeriodIndicator = (index) => {
     return (
@@ -132,23 +130,45 @@ export default function TimetableSection({
 
   return (
     <div className={classes.root}>
-      <Tabs
-        value={selectedIndex}
-        onChange={handleTimetableChange}
-        indicatorColor="primary"
-        variant="scrollable"
-        scrollButtons="auto"
-        aria-label="scrollable auto tabs"
-      >
-        {timetables.map((timetable, index) => (
-          <Tab
-            label={<Typography variant="body2">{timetable.title}</Typography>}
-            key={timetable.id}
-            {...a11yProps(index)}
-          />
-        ))}
-      </Tabs>
-      <Box className={classes.header}>
+      <div className={classes.header}>
+        <Tabs
+          className={classes.tabs}
+          value={selectedIndex}
+          onChange={handleSelectedTimetableIndexChange}
+          indicatorColor="secondary"
+          variant="scrollable"
+          scrollButtons="auto"
+          aria-label="scrollable auto tabs"
+        >
+          {timetables.map((timetable, index) => (
+            <Tab
+              label={<Typography variant="body2">{timetable.title}</Typography>}
+              key={timetable.id}
+              {...a11yProps(index)}
+            />
+          ))}
+        </Tabs>
+        <ButtonGroup size="small" className={classes.buttonGroup}>
+          <Tooltip title="시간표 생성" arrow>
+            <IconButton onClick={handleTimetableCreate}>
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="시간표 이름 수정" arrow>
+            <IconButton onClick={handleTimetableEdit}>
+              <CreateIcon />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="시간표 삭제" arrow>
+            <IconButton onClick={() => handleTimetableDelete(timetables[selectedIndex].title)}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </ButtonGroup>
+      </div>
+
+      <Box className={classes.timetableHeader}>
         {TIMETABLE_DAYS.map((indicator) => DayIndicator(indicator))}
       </Box>
       <Box className={classes.timetableBody}>
@@ -158,7 +178,7 @@ export default function TimetableSection({
 
           return (
             <Box className={classes.periodGrid} key={index}>
-              <LectureGrid lecture={lecturesForTT[period]} key={index} />
+              <LectureGrid lecture={lecturesForTimetable[period]} key={index} />
             </Box>
           );
         })}

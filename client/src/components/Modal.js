@@ -1,11 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Modal from '@material-ui/core/Modal';
-import Paper from '@material-ui/core/Paper';
-import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography';
-import InputBase from '@material-ui/core/InputBase';
-import Button from '@material-ui/core/Button';
+import { Modal, Paper, Box, Typography, InputBase, Button } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
