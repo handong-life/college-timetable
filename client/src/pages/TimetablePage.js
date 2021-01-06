@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { Redirect } from 'react-router-dom';
+
 import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 
 import { Lecture } from '../models';
-import { TopBar, SearchSection, TimetableSection } from '../components';
+import { TopBar, Modal, SearchSection, TimetableSection } from '../components';
 import { SERVERURL } from '../commons/constants';
 import Timetable from '../models/Timetable';
 
@@ -36,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function TimetablePage() {
+export default function TimetablePage({ authenticated, logout }) {
   const classes = useStyles();
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -47,6 +49,7 @@ export default function TimetablePage() {
   const [selectedSearchTabIndex, setSelectedSearchTabIndex] = useState(0);
 
   const [errorMessage, setErrorMessage] = useState('');
+  const [modalInfo, setModalInfo] = useState({ openModal: false });
 
   useEffect(() => {
     axios.get(`${SERVERURL}/api/user`).then(({ data: user }) => {
@@ -64,34 +67,43 @@ export default function TimetablePage() {
   }, []);
 
   useEffect(() => {
-    if (search.length !== 0) {
-      axios.get(`${SERVERURL}/api/search?search=${search}`).then((res) =>
-        setSearchResults(
-          res.data.map((lecture) => ({
-            ...new Lecture(lecture),
-            isBookmarked: bookmarks.find((bookmark) => bookmark.id === lecture.id),
-          })),
-        ),
-      );
-    }
+    if (search.length !== 0) getSearchResults();
   }, [search]);
+
+  useEffect(() => {
+    if (timetables[selectedTimetableIndex]?.id) getTimetable();
+  }, [selectedTimetableIndex, timetables]);
+
+  const getSearchResults = () => {
+    axios.get(`${SERVERURL}/api/search?search=${search}`).then((res) =>
+      setSearchResults(
+        res.data.map((lecture) => ({
+          ...new Lecture(lecture),
+          isBookmarked: bookmarks.find((bookmark) => bookmark.id === lecture.id),
+        })),
+      ),
+    );
+  };
+  const getTimetable = () => {
+    axios
+      .get(`${SERVERURL}/api/timetable/${timetables[selectedTimetableIndex].id}`)
+      .then(({ data: timetable }) => {
+        setTimetableLectures(
+          timetable.lectures.map((lecture) => ({
+            ...new Lecture(lecture),
+            isAdded: true,
+          })),
+        );
+      });
+  };
 
   const handleSnackBarClose = (event, reason) => {
     if (reason === 'clickaway') return;
     setErrorMessage('');
   };
 
-  const handleTimeTableChange = (event, index) => {
+  const handleSelectedTimetableIndexChange = (event, index) => {
     setSelectedTimetableIndex(index);
-    axios.get(`${SERVERURL}/api/timetable/${timetables[index].id}`).then(({ data: timetable }) => {
-      setSelectedTimetableIndex(index);
-      setTimetableLectures(
-        timetable.lectures.map((lecture) => ({
-          ...new Lecture(lecture),
-          isAdded: true,
-        })),
-      );
-    });
   };
 
   const handleSelectedSearchTabIndex = (event, index) => {
@@ -152,7 +164,7 @@ export default function TimetablePage() {
         `${SERVERURL}/api/timetable/lecture/${timetables[selectedTimetableIndex].id}/${lecture.id}`,
       )
       .then((res) => {
-        setTimetableLectures((lectures) => [...lectures, , { ...lecture, isAdded: true }]);
+        setTimetableLectures((lectures) => [...lectures, { ...lecture, isAdded: true }]);
       });
   };
 
@@ -168,9 +180,78 @@ export default function TimetablePage() {
       });
   };
 
+  const handleModalClose = () => {
+    setModalInfo({ openModal: false });
+  };
+
+  const openTimetableCreateModal = () => {
+    setModalInfo({
+      openModal: true,
+      handleModalInputSubmit: handleTimetableCreate,
+      handleModalClose,
+      titleText: '시간표 생성',
+      placeholderText: '시간표 이름',
+      buttonText: '생성',
+    });
+  };
+
+  const openTimetableEditModal = () => {
+    setModalInfo({
+      openModal: true,
+      handleModalInputSubmit: handleTimetableEdit,
+      handleModalClose,
+      titleText: '시간표 이름 변경',
+      placeholderText: '시간표 이름',
+      buttonText: '변경',
+    });
+  };
+
+  const openTimetableDeleteModal = (title) => {
+    setModalInfo({
+      openModal: true,
+      handleModalInputSubmit: handleTimetableDelete,
+      handleModalClose,
+      titleText: `'${title}'을(를) 삭제하시겠습니까?`,
+      buttonText: '확인',
+    });
+  };
+
+  const handleTimetableCreate = (title) => {
+    axios.post(`${SERVERURL}/api/timetable`, { title }).then((res) => {
+      setTimetables((timetables) => [...timetables, new Timetable(res.data)]);
+      setSelectedTimetableIndex(timetables.length);
+      handleModalClose();
+    });
+  };
+
+  const handleTimetableEdit = (title) => {
+    const id = timetables[selectedTimetableIndex].id;
+
+    axios.put(`${SERVERURL}/api/timetable`, { id, title }).then((res) => {
+      setTimetables((timetables) => {
+        timetables[selectedTimetableIndex].title = title;
+        setTimetables(timetables);
+      });
+      handleModalClose();
+    });
+  };
+
+  const handleTimetableDelete = () => {
+    const toDeleteId = timetables[selectedTimetableIndex].id;
+    axios.delete(`${SERVERURL}/api/timetable/${toDeleteId}`).then((res) => {
+      if (selectedTimetableIndex === timetables.length - 1) {
+        setSelectedTimetableIndex(selectedTimetableIndex - 1);
+      }
+      setTimetables([...timetables.filter((timetable) => timetable.id !== toDeleteId)]);
+      handleModalClose();
+    });
+  };
+
+  if (!authenticated) return <Redirect to="/" />;
+
   return (
     <div className={classes.root}>
-      <TopBar />
+      <TopBar logout={logout} />
       <div className={classes.body}>
         <SearchSection
           {...{
@@ -190,7 +271,10 @@ export default function TimetablePage() {
             timetables,
             selectedIndex: selectedTimetableIndex,
             lectures: timetableLectures,
-            handleTimeTableChange,
+            handleSelectedTimetableIndexChange,
+            handleTimetableCreate: openTimetableCreateModal,
+            handleTimetableDelete: openTimetableDeleteModal,
+            handleTimetableEdit: openTimetableEditModal,
           }}
         />
       </div>
@@ -203,6 +287,7 @@ export default function TimetablePage() {
           {errorMessage}
         </Alert>
       </Snackbar>
+      <Modal {...modalInfo} />
     </div>
   );
 }
