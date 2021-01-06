@@ -71,7 +71,7 @@ export default function HomePage({ authenticated, location }) {
         <Button
           className={classes.loginButton}
           variant="text"
-          href="http://localhost:3000/api/auth/google"
+          href="http://www.timetable.college/api/auth/google"
         >
           <img className={classes.google} src="/google.png" />
           학교 계정으로 시작하기
