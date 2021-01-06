@@ -31,7 +31,7 @@ export default function App() {
             <Route exact path="/" render={() => <HomePage authenticated={authenticated} />} />
             <Route
               exact
-              path="/timetable"
+              path="/handong"
               render={() => <TimetablePage {...{ authenticated, logout }} />}
             />
             <Route component={NotFoundPage} />

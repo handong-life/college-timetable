@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function HomePage({ authenticated, location }) {
   const classes = useStyles();
-  if (authenticated) return <Redirect to="/timetable" />;
+  if (authenticated) return <Redirect to="/handong" />;
   return (
     <div className={classes.root}>
       <div className={classes.body}>
