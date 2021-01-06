@@ -20,6 +20,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
+
+    [theme.breakpoints.down('sm')]: {
+      width: 300,
+    },
   },
 
   titleText: {
