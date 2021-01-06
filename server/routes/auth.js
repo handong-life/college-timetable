@@ -19,7 +19,7 @@ passport.use(
     {
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: '/api/auth/google/callback',
+      callbackURL: GOOGLE_CALLBACK_URL,
     },
     function (accessToken, refreshToken, profile, next) {
       if (!profile) return next('err', null);
