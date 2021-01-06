@@ -15,18 +15,21 @@ exports.getTimetable = async (req, res) => {
   res.send(timetable);
 };
 exports.createTimetable = async (req, res) => {
-  const timetable = await Timetable.create(req.body);
+  const timetable = await Timetable.create({
+    userId: req.user.id,
+    title: req.body.title,
+  });
   res.send(timetable);
 };
 
 exports.updateTimetable = async (req, res) => {
-  const { id, name } = req.body;
-  await Timetable.update({ name }, { where: { id } });
+  const { id, title } = req.body;
+  await Timetable.update({ title }, { where: { id } });
   res.send('complete');
 };
 
 exports.deleteTimetable = async (req, res) => {
-  await Timetable.destroy({ where: { id: +req.params.id } });
+  await Timetable.destroy({ where: { id: +req.params.timetableId } });
   res.send('complete');
 };
 
