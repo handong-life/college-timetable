@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const router = Router();
+const createError = require('http-errors');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/user');
@@ -22,19 +23,15 @@ passport.use(
     },
     function (accessToken, refreshToken, profile, next) {
       if (!profile) return next('err', null);
-
       User.findOne({ where: { email: profile.emails[0].value } }).then(async (user) => {
         if (user) {
-          const { name, email, imageUrl } = user;
-          return next(null, { name, email, imageUrl });
+          return next(null, user);
         } else {
-          const { id, name, email, imageUrl } = await User.create({
-            name: profile.displayName,
+          const user = await User.create({
             email: profile.emails[0].value,
-            imageUrl: profile.photos[0].value,
           });
-          await Timetable.create({ userId: id, name: '예비시간표1' });
-          return next(null, { name, email, imageUrl });
+          await Timetable.create({ userId: user.id, title: '예비시간표1' });
+          return next(null, user);
         }
       });
     },
@@ -44,10 +41,9 @@ passport.use(
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) return next();
   // for testing
-  req.user = { id: 1 };
-  console.log('hi');
-  return next();
-  // throw createError(401, 'Auth Error');
+  // req.user = { id: 1 };
+  // return next();
+  throw createError({ status: 401, message: 'Auth Error' });
 }
 
 router.get(
@@ -72,5 +68,10 @@ router.get(
     delete req.session.returnTo;
   },
 );
+
+router.get('/logout', function (req, res) {
+  req.logout();
+  res.send('complete');
+});
 
 module.exports = { router, isAuthenticated };
