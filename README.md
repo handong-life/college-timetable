@@ -1,1 +1,3 @@
-# college-time-table
+# 대학시간
+대학교 예비 수강신청 도우미
+
