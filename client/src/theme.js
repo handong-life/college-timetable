@@ -3,26 +3,11 @@ import { createMuiTheme } from '@material-ui/core/styles';
 // Create a theme instance.
 const theme = createMuiTheme({
   palette: {
-    primary: {
-      main: 'rgb(32,60,125)',
-      light: 'rgb(120,137,176)',
-      contrastText: '#fff',
-    },
     secondary: {
-      main: 'rgb(35,64,127)',
+      main: '#04ccf2',
       contrastText: '#fff',
     },
-    good: {
-      main: 'rgb(0, 134, 252)',
-      light: 'rgb(112, 157, 255)',
-    },
-    bad: {
-      main: 'rgb(255, 51, 80)',
-      light: 'rgb(255, 120, 129)',
-    },
-    safe: 'rgb( 124, 208, 159)',
-    moderate: 'rgb( 255, 207, 93)',
-    danger: 'rgb(247, 137, 117)',
+
     backgroundColor: {
       default: 'rgb(253,253,253)',
       paper: 'rgb(255,255,255)',
