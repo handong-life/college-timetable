@@ -1,27 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
+
 import { ThemeProvider } from '@material-ui/core/styles';
 import { HomePage, TimetablePage, NotFoundPage } from './pages';
 import theme from './theme';
-import { SERVERURL } from './commons/constants';
-import axios from 'axios';
+import { Axios } from './lib/axios';
+import { storage } from './utils/storage';
 
 export default function App() {
   const [cookies, setCookies, removeCookies] = useCookies('user');
   const [authenticated, setAuthenticated] = useState(false);
-  console.log(authenticated);
 
   const logout = () => {
-    axios.get(`${SERVERURL}/api/auth/logout`).then((res) => {
-      removeCookies('user');
-      setAuthenticated(false);
-    });
+    storage.remove('accessToken');
+    setAuthenticated(false);
   };
 
   useEffect(() => {
-    setAuthenticated(cookies.user != undefined);
-  }, [cookies]);
+    if (cookies.accessToken) {
+      storage.set('accessToken', cookies.accessToken);
+      removeCookies('accessToken');
+    }
+
+    Axios()
+      .get('/auth')
+      .then((res) => setAuthenticated(res.data.authenticated));
+  }, []);
 
   return (
     <div className="App">
