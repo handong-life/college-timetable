@@ -32,7 +32,8 @@ const useTopBarStyle = makeStyles((theme) => ({
 
   icon: {
     marginRight: 8,
-    width: '30px',
+    width: 30,
+    height: 30,
   },
 }));
 

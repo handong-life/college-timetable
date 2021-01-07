@@ -20,13 +20,16 @@ const useStyles = makeStyles((theme) => ({
   header: {
     display: 'flex',
     justifyContent: 'space-between',
+    minHeight: 'fit-content',
   },
 
   tabs: {
-    width: '100%',
+    height: '100%',
   },
 
   buttonGroup: {
+    alignSelf: 'flex-end',
+    height: 40,
     borderRadius: '23px',
     backgroundColor: 'white',
     marginBottom: '5px',
@@ -50,7 +53,8 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     display: 'grid',
     overflowY: 'scroll',
-    gridTemplateColumns: '0.5fr repeat(6, minmax(auto, 1fr))',
+    gridTemplateRows: 'repeat(9, 80px)',
+    gridTemplateColumns: '0.5fr repeat(6, minmax(0, 1fr))',
     borderTop: '1px solid #eaedf1',
     borderLeft: '1px solid #eaedf1',
     backgroundColor: 'white',
@@ -74,11 +78,11 @@ const useStyles = makeStyles((theme) => ({
 
   periodGrid: {
     display: 'flex',
-    width: '100%',
-    height: '80px',
-    padding: '1px',
     flexDirection: 'column',
     justifyContent: 'space-between',
+    width: '100%',
+    height: '100%',
+    padding: '1px',
     borderBottom: '1px solid #eaedf1',
     borderRight: '1px solid #eaedf1',
   },
@@ -129,8 +133,8 @@ export default function TimetableSection({
   };
 
   return (
-    <div className={classes.root}>
-      <div className={classes.header}>
+    <Box className={classes.root}>
+      <Box className={classes.header}>
         <Tabs
           className={classes.tabs}
           value={selectedIndex}
@@ -166,7 +170,7 @@ export default function TimetableSection({
             </IconButton>
           </Tooltip>
         </ButtonGroup>
-      </div>
+      </Box>
 
       <Box className={classes.timetableHeader}>
         {TIMETABLE_DAYS.map((indicator) => DayIndicator(indicator))}
@@ -183,6 +187,6 @@ export default function TimetableSection({
           );
         })}
       </Box>
-    </div>
+    </Box>
   );
 }

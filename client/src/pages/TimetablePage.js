@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 
-import axios from 'axios';
+import { Axios } from '../lib/axios';
 import { makeStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 
-import { SERVERURL } from '../commons/constants';
-import { Lecture, Timetable } from '../models';
+import { Lecture, Timetable, User } from '../models';
 import { TopBar, Modal, SearchSection, TimetableSection } from '../components';
 
 function Alert(props) {
@@ -40,29 +39,34 @@ const useStyles = makeStyles((theme) => ({
 export default function TimetablePage({ authenticated, logout }) {
   const classes = useStyles();
   const [search, setSearch] = useState('');
+  const [user, setUser] = useState();
   const [searchResults, setSearchResults] = useState([]);
   const [bookmarks, setBookmarks] = useState([]);
-  const [timetables, setTimetables] = useState([]);
+  const [{ selectedTimetableIndex, timetables }, setTimetableTab] = useState({
+    selectedTimetableIndex: 0,
+    timetables: [],
+  });
   const [timetableLectures, setTimetableLectures] = useState([]);
-  const [selectedTimetableIndex, setSelectedTimetableIndex] = useState(0);
   const [selectedSearchTabIndex, setSelectedSearchTabIndex] = useState(0);
-
   const [errorMessage, setErrorMessage] = useState('');
   const [modalInfo, setModalInfo] = useState({ openModal: false });
 
   useEffect(() => {
-    axios.get(`${SERVERURL}/api/user`).then(({ data: user }) => {
-      setBookmarks(
-        user.lectures.map((lecture) => ({ ...new Lecture(lecture), isBookmarked: true })),
-      );
-      setTimetables(user.timetables.map((timetable) => new Timetable(timetable)));
-      setTimetableLectures(
-        user.timetables[0].lectures.map((lecture) => ({
-          ...new Lecture(lecture),
-          isAdded: true,
-        })),
-      );
-    });
+    Axios()
+      .get(`/user`)
+      .then(({ data }) => {
+        setUser(new User(data));
+        setBookmarks(
+          data.lectures.map((lecture) => ({ ...new Lecture(lecture), isBookmarked: true })),
+        );
+        setTimetableTab((timetableTab) => ({ ...timetableTab, timetables: data.timetables }));
+        setTimetableLectures(
+          data.timetables[0].lectures.map((lecture) => ({
+            ...new Lecture(lecture),
+            isAdded: true,
+          })),
+        );
+      });
   }, []);
 
   useEffect(() => {
@@ -70,23 +74,40 @@ export default function TimetablePage({ authenticated, logout }) {
   }, [search]);
 
   useEffect(() => {
-    if (timetables[selectedTimetableIndex]?.id) getTimetable();
-  }, [selectedTimetableIndex, timetables]);
+    setSearchResults((lectures) =>
+      lectures.map((lecture) => ({
+        ...lecture,
+        isBookmarked: bookmarks.find((bookmark) => bookmark.id === lecture.id) !== undefined,
+      })),
+    );
+  }, [bookmarks]);
+
+  useEffect(() => {
+    if (user) {
+      if (selectedTimetableIndex === -1) {
+        handleTimetableCreate('예비시간표1');
+      } else {
+        getTimetable();
+      }
+    }
+  }, [selectedTimetableIndex]);
 
   const getSearchResults = () => {
-    axios.get(`${SERVERURL}/api/search?search=${search}`).then((res) =>
-      setSearchResults(
-        res.data.map((lecture) => ({
-          ...new Lecture(lecture),
-          isBookmarked: bookmarks.find((bookmark) => bookmark.id === lecture.id),
-        })),
-      ),
-    );
+    Axios()
+      .get(`/search?search=${search}`)
+      .then((res) =>
+        setSearchResults(
+          res.data.map((lecture) => ({
+            ...new Lecture(lecture),
+            isBookmarked: bookmarks.find((bookmark) => bookmark.id === lecture.id),
+          })),
+        ),
+      );
   };
 
   const getTimetable = () => {
-    axios
-      .get(`${SERVERURL}/api/timetable/${timetables[selectedTimetableIndex].id}`)
+    Axios()
+      .get(`/timetable/${timetables[selectedTimetableIndex].id}`)
       .then(({ data: timetable }) => {
         setTimetableLectures(
           timetable.lectures.map((lecture) => ({
@@ -103,7 +124,7 @@ export default function TimetablePage({ authenticated, logout }) {
   };
 
   const handleSelectedTimetableIndexChange = (event, index) => {
-    setSelectedTimetableIndex(index);
+    setTimetableTab((timetableTab) => ({ ...timetableTab, selectedTimetableIndex: index }));
   };
 
   const handleSelectedSearchTabIndex = (event, index) => {
@@ -121,25 +142,19 @@ export default function TimetablePage({ authenticated, logout }) {
   };
 
   const handleBookmarkClick = (lecture) => {
-    axios.post(`${SERVERURL}/api/user/bookmark/${lecture.id}`).then((res) => {
-      setBookmarks([...bookmarks, lecture]);
-      const id = searchResults.findIndex((result) => result.id === lecture.id);
-      if (id === -1) return;
-      const newSearchResults = [...searchResults];
-      newSearchResults[id].isBookmarked = true;
-      setSearchResults(newSearchResults);
-    });
+    Axios()
+      .post(`/user/bookmark/${lecture.id}`)
+      .then((res) => {
+        setBookmarks([...bookmarks, { ...lecture, isBookmarked: true }]);
+      });
   };
 
   const handleUnbookmarkClick = (lecture) => {
-    axios.delete(`${SERVERURL}/api/user/bookmark/${lecture.id}`).then((res) => {
-      setBookmarks([...bookmarks.filter((bookmark) => bookmark.id !== lecture.id)]);
-      const id = searchResults.findIndex((result) => result.id === lecture.id);
-      if (id === -1) return;
-      const newSearchResults = [...searchResults];
-      newSearchResults[id].isBookmarked = false;
-      setSearchResults(newSearchResults);
-    });
+    Axios()
+      .delete(`/user/bookmark/${lecture.id}`)
+      .then((res) => {
+        setBookmarks([...bookmarks.filter((bookmark) => bookmark.id !== lecture.id)]);
+      });
   };
 
   const handleAddClick = (lecture) => {
@@ -159,20 +174,16 @@ export default function TimetablePage({ authenticated, logout }) {
       return setErrorMessage('해당 시간에 다른 과목이 존재합니다!');
     }
 
-    axios
-      .post(
-        `${SERVERURL}/api/timetable/lecture/${timetables[selectedTimetableIndex].id}/${lecture.id}`,
-      )
+    Axios()
+      .post(`/timetable/lecture/${timetables[selectedTimetableIndex].id}/${lecture.id}`)
       .then((res) => {
         setTimetableLectures((lectures) => [...lectures, { ...lecture, isAdded: true }]);
       });
   };
 
   const handleDeleteClick = (lecture) => {
-    axios
-      .delete(
-        `${SERVERURL}/api/timetable/lecture/${timetables[selectedTimetableIndex].id}/${lecture.id}`,
-      )
+    Axios()
+      .delete(`/timetable/lecture/${timetables[selectedTimetableIndex].id}/${lecture.id}`)
       .then((res) => {
         setTimetableLectures([
           ...timetableLectures.filter((timetableLecture) => timetableLecture.id !== lecture.id),
@@ -217,34 +228,52 @@ export default function TimetablePage({ authenticated, logout }) {
   };
 
   const handleTimetableCreate = (title) => {
-    axios.post(`${SERVERURL}/api/timetable`, { title }).then((res) => {
-      setTimetables((timetables) => [...timetables, new Timetable(res.data)]);
-      setSelectedTimetableIndex(timetables.length);
-      handleModalClose();
-    });
+    Axios()
+      .post(`/timetable`, { title })
+      .then((res) => {
+        setTimetableTab(({ timetables }) => ({
+          selectedTimetableIndex: timetables.length,
+          timetables: [...timetables, new Timetable(res.data)],
+        }));
+        handleModalClose();
+      });
   };
 
   const handleTimetableEdit = (title) => {
     const id = timetables[selectedTimetableIndex].id;
 
-    axios.put(`${SERVERURL}/api/timetable`, { id, title }).then((res) => {
-      setTimetables((timetables) => {
-        timetables[selectedTimetableIndex].title = title;
-        setTimetables(timetables);
+    Axios()
+      .put(`/timetable`, { id, title })
+      .then((res) => {
+        setTimetableTab(({ timetables, selectedTimetableIndex }) => {
+          timetables[selectedTimetableIndex].title = title;
+          return {
+            selectedTimetableIndex,
+            timetables,
+          };
+        });
+
+        handleModalClose();
       });
-      handleModalClose();
-    });
   };
 
   const handleTimetableDelete = () => {
     const toDeleteId = timetables[selectedTimetableIndex].id;
-    axios.delete(`${SERVERURL}/api/timetable/${toDeleteId}`).then((res) => {
-      if (selectedTimetableIndex === timetables.length - 1) {
-        setSelectedTimetableIndex(selectedTimetableIndex - 1);
-      }
-      setTimetables([...timetables.filter((timetable) => timetable.id !== toDeleteId)]);
-      handleModalClose();
-    });
+    Axios()
+      .delete(`/timetable/${toDeleteId}`)
+      .then((res) => {
+        setTimetableTab(({ timetables, selectedTimetableIndex }) => {
+          return {
+            selectedTimetableIndex:
+              selectedTimetableIndex == timetables.length - 1
+                ? selectedTimetableIndex - 1
+                : selectedTimetableIndex,
+            timetables: [...timetables.filter((timetable) => timetable.id !== toDeleteId)],
+          };
+        });
+
+        handleModalClose();
+      });
   };
 
   if (!authenticated) return <Redirect to="/" />;
@@ -280,7 +309,7 @@ export default function TimetablePage({ authenticated, logout }) {
       </div>
       <Snackbar
         open={errorMessage.length !== 0}
-        autoHideDuration={1000}
+        autoHideDuration={2000}
         onClose={handleSnackBarClose}
       >
         <Alert onClose={handleSnackBarClose} severity="error">
