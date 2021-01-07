@@ -51,6 +51,7 @@ const useStyles = makeStyles((theme) => ({
 
   google: {
     width: 15,
+    height: 15,
     marginRight: 10,
     marginBottom: 2,
   },

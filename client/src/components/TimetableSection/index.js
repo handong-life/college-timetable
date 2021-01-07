@@ -20,13 +20,16 @@ const useStyles = makeStyles((theme) => ({
   header: {
     display: 'flex',
     justifyContent: 'space-between',
+    minHeight: 'fit-content',
   },
 
   tabs: {
-    width: '100%',
+    height: '100%',
   },
 
   buttonGroup: {
+    alignSelf: 'flex-end',
+    height: 40,
     borderRadius: '23px',
     backgroundColor: 'white',
     marginBottom: '5px',
@@ -129,8 +132,8 @@ export default function TimetableSection({
   };
 
   return (
-    <div className={classes.root}>
-      <div className={classes.header}>
+    <Box className={classes.root}>
+      <Box className={classes.header}>
         <Tabs
           className={classes.tabs}
           value={selectedIndex}
@@ -166,7 +169,7 @@ export default function TimetableSection({
             </IconButton>
           </Tooltip>
         </ButtonGroup>
-      </div>
+      </Box>
 
       <Box className={classes.timetableHeader}>
         {TIMETABLE_DAYS.map((indicator) => DayIndicator(indicator))}
@@ -183,6 +186,6 @@ export default function TimetableSection({
           );
         })}
       </Box>
-    </div>
+    </Box>
   );
 }
