@@ -69,6 +69,7 @@ export default function SearchBar({ initialSearch = '', handleSearchSubmit, hand
         <InputBase
           ref={inputRef}
           className={classes.input}
+          autoComplete="off"
           name="search"
           placeholder="강의명, 교수, 학부, 과목코드, 시간(ex. 화8)"
           value={search}
