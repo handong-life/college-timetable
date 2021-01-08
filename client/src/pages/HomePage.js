@@ -43,6 +43,13 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 30,
   },
 
+  warning: {
+    fontWeight: 600,
+    fontSize: 14,
+    color: 'red',
+    textAlign: 'center',
+  },
+
   loginButton: {
     fontWeight: 600,
     fontSize: 15,
@@ -77,6 +84,7 @@ export default function HomePage({ authenticated, location }) {
           <img className={classes.google} src="/google.png" />
           학교 계정으로 시작하기
         </Button>
+        <Typography className={classes.warning}>현재 베타 테스트 진행 중입니다!</Typography>
       </div>
     </div>
   );
