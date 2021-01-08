@@ -5,6 +5,18 @@ const User = require('../models/user');
 const UserLectureRelation = require('../models/user_lecture_relation');
 
 exports.getUser = async (req, res) => {
+  await User.update(
+    {
+      viewCount: User.sequelize.literal('viewCount + 1'),
+      lastLoggedInAt: new Date(),
+    },
+    {
+      where: {
+        id: req.user.id,
+      },
+    },
+  );
+
   const user = await User.findOne({
     where: {
       id: req.user.id,
