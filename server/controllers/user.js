@@ -1,3 +1,4 @@
+const Feedback = require('../models/feedback');
 const Lecture = require('../models/lecture');
 const Timetable = require('../models/timetable');
 const User = require('../models/user');
@@ -16,7 +17,6 @@ exports.getUser = async (req, res) => {
       { model: Timetable, include: Lecture },
     ],
   });
-  console.log(user);
   res.send(user);
 };
 
@@ -50,4 +50,13 @@ exports.getBookmarks = async (req, res) => {
   });
 
   res.send(userBookmarks.lectures);
+};
+
+exports.createFeedback = async (req, res) => {
+  await Feedback.create({
+    userId: req.user.id,
+    feedback: req.body.feedback,
+  });
+
+  res.send('complete');
 };
