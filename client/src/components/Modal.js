@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Modal, Paper, Box, Typography, InputBase, Button } from '@material-ui/core';
 
@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   titleText: {
-    marginBottom: '15px',
+    margin: '0 0 10px 3px',
   },
 
   inputBox: {
@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: 'white',
     paddingLeft: '8px',
     marginBottom: '15px',
-    borderRadius: '10px',
+    borderRadius: '5px',
     border: '1px solid #dfe1e5',
   },
 
@@ -67,6 +67,10 @@ export default function MyModal({
   const inputRef = useRef();
   const [inputText, setInputText] = useState('');
 
+  useEffect(() => {
+    setInputText('');
+  }, [openModal]);
+
   return (
     <Modal
       className={classes.root}
@@ -85,6 +89,7 @@ export default function MyModal({
               ref={inputRef}
               className={classes.input}
               value={inputText}
+              autoComplete="off"
               name="modalInput"
               onChange={(e) => setInputText(e.target.value)}
               placeholder={placeholderText}
