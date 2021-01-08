@@ -1,5 +1,4 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Typography } from '@material-ui/core';
 
@@ -64,9 +63,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function HomePage({ authenticated, location }) {
+export default function HomePage() {
   const classes = useStyles();
-  if (authenticated) return <Redirect to="/handong" />;
   return (
     <div className={classes.root}>
       <div className={classes.body}>

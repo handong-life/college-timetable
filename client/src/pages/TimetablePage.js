@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Redirect } from 'react-router-dom';
 
 import { Axios } from '../lib/axios';
 import { makeStyles } from '@material-ui/core/styles';
@@ -36,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function TimetablePage({ authenticated, logout }) {
+export default function TimetablePage({ logout }) {
   const classes = useStyles();
   const [search, setSearch] = useState('');
   const [user, setUser] = useState();
@@ -294,8 +293,6 @@ export default function TimetablePage({ authenticated, logout }) {
         handleModalClose();
       });
   };
-
-  if (!authenticated) return <Redirect to="/" />;
 
   return (
     <div className={classes.root}>
