@@ -5,6 +5,11 @@ class User extends Model {
     return super.init(
       {
         email: DataTypes.TEXT,
+        lastLoggedInAt: DataTypes.DATE,
+        viewCount: {
+          type: DataTypes.INTEGER,
+          defaultValue: 0,
+        },
       },
       {
         tableName: 'User',

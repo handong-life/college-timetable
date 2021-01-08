@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 
 import { ThemeProvider } from '@material-ui/core/styles';
@@ -33,11 +33,27 @@ export default function App() {
       <ThemeProvider theme={theme}>
         <Router>
           <Switch>
-            <Route exact path="/" render={() => <HomePage authenticated={authenticated} />} />
+            <Route
+              exact
+              path="/"
+              render={() =>
+                authenticated ? (
+                  <Redirect to="/handong" />
+                ) : (
+                  <HomePage authenticated={authenticated} />
+                )
+              }
+            />
             <Route
               exact
               path="/handong"
-              render={() => <TimetablePage {...{ authenticated, logout }} />}
+              render={() =>
+                !authenticated ? (
+                  <Redirect to="/" />
+                ) : (
+                  <TimetablePage {...{ authenticated, logout }} />
+                )
+              }
             />
             <Route component={NotFoundPage} />
           </Switch>

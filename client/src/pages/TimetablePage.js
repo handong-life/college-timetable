@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Redirect } from 'react-router-dom';
 
 import { Axios } from '../lib/axios';
 import { makeStyles } from '@material-ui/core/styles';
@@ -36,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function TimetablePage({ authenticated, logout }) {
+export default function TimetablePage({ logout }) {
   const classes = useStyles();
   const [search, setSearch] = useState('');
   const [user, setUser] = useState();
@@ -206,6 +205,17 @@ export default function TimetablePage({ authenticated, logout }) {
     });
   };
 
+  const openFeedbackReportModal = () => {
+    setModalInfo({
+      openModal: true,
+      handleModalInputSubmit: handleFeedbackReport,
+      handleModalClose,
+      titleText: '버그나 피드백을 남겨주세요!',
+      placeholderText: '버그, 피드백',
+      buttonText: '제출',
+    });
+  };
+
   const openTimetableEditModal = () => {
     setModalInfo({
       openModal: true,
@@ -276,11 +286,17 @@ export default function TimetablePage({ authenticated, logout }) {
       });
   };
 
-  if (!authenticated) return <Redirect to="/" />;
+  const handleFeedbackReport = (feedback) => {
+    Axios()
+      .post(`/user/feedback`, { feedback })
+      .then((res) => {
+        handleModalClose();
+      });
+  };
 
   return (
     <div className={classes.root}>
-      <TopBar logout={logout} />
+      <TopBar {...{ logout, openFeedbackReportModal }} />
       <div className={classes.body}>
         <SearchSection
           {...{

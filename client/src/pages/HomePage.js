@@ -1,5 +1,4 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Typography } from '@material-ui/core';
 
@@ -43,6 +42,13 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 30,
   },
 
+  warning: {
+    fontWeight: 600,
+    fontSize: 14,
+    color: 'red',
+    textAlign: 'center',
+  },
+
   loginButton: {
     fontWeight: 600,
     fontSize: 15,
@@ -57,9 +63,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function HomePage({ authenticated, location }) {
+export default function HomePage() {
   const classes = useStyles();
-  if (authenticated) return <Redirect to="/handong" />;
   return (
     <div className={classes.root}>
       <div className={classes.body}>
@@ -77,6 +82,7 @@ export default function HomePage({ authenticated, location }) {
           <img className={classes.google} src="/google.png" />
           학교 계정으로 시작하기
         </Button>
+        <Typography className={classes.warning}>현재 베타 테스트 진행 중입니다!</Typography>
       </div>
     </div>
   );
