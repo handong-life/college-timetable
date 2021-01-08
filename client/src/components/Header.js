@@ -1,6 +1,7 @@
 import React from 'react';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import { AppBar, Box, IconButton, Typography } from '@material-ui/core';
+import { AppBar, Box, IconButton, Typography, Tooltip } from '@material-ui/core';
+import FeedbackIcon from '@material-ui/icons/Feedback';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 const useTopBarStyle = makeStyles((theme) => ({
@@ -25,19 +26,28 @@ const useTopBarStyle = makeStyles((theme) => ({
     marginRight: 'auto',
   },
 
-  title: {
-    fontWeight: 800,
-    fontSize: '20px',
-  },
-
   icon: {
     marginRight: 8,
     width: 30,
     height: 30,
   },
+
+  title: {
+    fontWeight: 800,
+    fontSize: '20px',
+  },
+
+  warning: {
+    display: 'flex',
+    alignItems: 'center',
+    marginLeft: 15,
+    fontWeight: 600,
+    fontSize: 14,
+    color: 'red',
+  },
 }));
 
-export default function Header({ logout }) {
+export default function Header({ logout, openFeedbackReportModal }) {
   const classes = useTopBarStyle();
 
   return (
@@ -45,7 +55,14 @@ export default function Header({ logout }) {
       <Box className={classes.front}>
         <img className={classes.icon} src="/timetable.png" />
         <Typography className={classes.title}>대학시간</Typography>
+        <Typography className={classes.warning}>베타 테스트 중!</Typography>
       </Box>
+      <Tooltip title="피드백 남기기" arrow>
+        <IconButton onClick={openFeedbackReportModal}>
+          <FeedbackIcon />
+        </IconButton>
+      </Tooltip>
+
       <IconButton onClick={logout}>
         <ExitToAppIcon />
       </IconButton>
