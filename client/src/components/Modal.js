@@ -84,9 +84,16 @@ export default function MyModal({
           {titleText}
         </Typography>
         {placeholderText && (
-          <Box className={classes.inputBox}>
+          <form
+            className={classes.inputBox}
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleModalInputSubmit(inputText);
+            }}
+          >
             <InputBase
               ref={inputRef}
+              autoFocus
               className={classes.input}
               value={inputText}
               autoComplete="off"
@@ -94,7 +101,7 @@ export default function MyModal({
               onChange={(e) => setInputText(e.target.value)}
               placeholder={placeholderText}
             />
-          </Box>
+          </form>
         )}
         <Box className={classes.buttonBox}>
           <Button

@@ -6,6 +6,7 @@ import AddIcon from '@material-ui/icons/Add';
 import CreateIcon from '@material-ui/icons/Create';
 import DeleteIcon from '@material-ui/icons/Delete';
 import LectureGrid from './LectureGrid';
+import { sum } from '../../utils/helper';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -14,7 +15,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     overflowY: 'hidden',
-    borderBottom: '1px solid #eaedf1',
+
+    [theme.breakpoints.down('sm')]: {
+      height: '75%',
+    },
   },
 
   header: {
@@ -40,12 +44,16 @@ const useStyles = makeStyles((theme) => ({
     height: '50px',
     display: 'grid',
     gridTemplateRows: 'repeat(1, 1fr)',
-    gridTemplateColumns: '0.5fr repeat(6, minmax(auto, 1fr))',
+    gridTemplateColumns: '0.5fr repeat(5, minmax(auto, 1fr))',
     borderTop: '1px solid #eaedf1',
     borderLeft: '1px solid #eaedf1',
     borderTopLeftRadius: '15px',
     borderTopRightRadius: '15px',
     backgroundColor: '#eaedf1',
+
+    [theme.breakpoints.down('sm')]: {
+      height: '40px',
+    },
   },
 
   timetableBody: {
@@ -54,10 +62,15 @@ const useStyles = makeStyles((theme) => ({
     display: 'grid',
     overflowY: 'scroll',
     gridTemplateRows: 'repeat(9, 80px)',
-    gridTemplateColumns: '0.5fr repeat(6, minmax(0, 1fr))',
+    gridTemplateColumns: '0.5fr repeat(5, minmax(0, 1fr))',
     borderTop: '1px solid #eaedf1',
     borderLeft: '1px solid #eaedf1',
+    borderBottom: '1px solid #eaedf1',
     backgroundColor: 'white',
+
+    [theme.breakpoints.down('sm')]: {
+      gridTemplateRows: 'repeat(9, 60px)',
+    },
   },
 
   dayIndicator: {
@@ -86,6 +99,11 @@ const useStyles = makeStyles((theme) => ({
     borderBottom: '1px solid #eaedf1',
     borderRight: '1px solid #eaedf1',
   },
+
+  creditIndicator: {
+    marginTop: 5,
+    marginRight: 2,
+  },
 }));
 
 function a11yProps(index) {
@@ -112,14 +130,15 @@ export default function TimetableSection({
   handleTimetableDelete,
   handleTimetableEdit,
 }) {
-  const TIMETABLE_DAYS = ['', '월', '화', '수', '목', '금', '토'];
+  const TIMETABLE_DAYS = ['', '월', '화', '수', '목', '금'];
+  const MAX_PERIOD = 9;
   const classes = useStyles();
   const lecturesForTimetable = getLecturesForTimetable(lectures);
 
   const PeriodIndicator = (index) => {
     return (
       <Box className={classes.periodIndicator} key={index}>
-        <Typography variant="body2">{parseInt(index / 7 + 1)}</Typography>
+        <Typography variant="body2">{parseInt(index / TIMETABLE_DAYS.length + 1)}</Typography>
       </Box>
     );
   };
@@ -176,9 +195,11 @@ export default function TimetableSection({
         {TIMETABLE_DAYS.map((indicator) => DayIndicator(indicator))}
       </Box>
       <Box className={classes.timetableBody}>
-        {Array.from(Array(63)).map((value, index) => {
-          if (index % 7 === 0) return PeriodIndicator(index);
-          const period = TIMETABLE_DAYS[index % 7] + parseInt(index / 7 + 1);
+        {Array.from(Array(TIMETABLE_DAYS.length * MAX_PERIOD)).map((value, index) => {
+          if (index % TIMETABLE_DAYS.length === 0) return PeriodIndicator(index);
+          const period =
+            TIMETABLE_DAYS[index % TIMETABLE_DAYS.length] +
+            parseInt(index / TIMETABLE_DAYS.length + 1);
 
           return (
             <Box className={classes.periodGrid} key={index}>
@@ -186,6 +207,11 @@ export default function TimetableSection({
             </Box>
           );
         })}
+      </Box>
+      <Box className={classes.creditIndicator}>
+        <Typography variant="body1" style={{ textAlign: 'right' }}>
+          {sum(lectures, 'credit')}학점
+        </Typography>
       </Box>
     </Box>
   );

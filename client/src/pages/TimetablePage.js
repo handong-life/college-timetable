@@ -157,17 +157,26 @@ export default function TimetablePage({ logout }) {
   };
 
   const handleAddClick = (lecture) => {
-    const isLectureDup =
-      timetableLectures.findIndex((timetableLecture) => timetableLecture.id === lecture.id) !== -1;
+    const isLectureDup = timetableLectures.findIndex(({ id }) => id === lecture.id) !== -1;
 
     if (isLectureDup) {
       return setErrorMessage('이미 시간표에 추가된 과목입니다!');
     }
 
-    const isPeriodDup =
-      timetableLectures.findIndex((timetableLecture) =>
-        timetableLecture.period.includes(lecture.period.split(',')),
-      ) !== -1;
+    const isNameDup = timetableLectures.findIndex(({ name }) => name === lecture.name) !== -1;
+
+    if (isNameDup) {
+      return setErrorMessage('분반이 다른 같은 과목이 존재합니다!');
+    }
+
+    const isPeriodDup = timetableLectures.reduce(
+      (isDup, { period: periods }) =>
+        isDup ||
+        lecture.period
+          .split(',')
+          .reduce((isDup, period) => isDup || periods.includes(period), false),
+      false,
+    );
 
     if (isPeriodDup) {
       return setErrorMessage('해당 시간에 다른 과목이 존재합니다!');
@@ -275,7 +284,7 @@ export default function TimetablePage({ logout }) {
         setTimetableTab(({ timetables, selectedTimetableIndex }) => {
           return {
             selectedTimetableIndex:
-              selectedTimetableIndex == timetables.length - 1
+              selectedTimetableIndex === timetables.length - 1
                 ? selectedTimetableIndex - 1
                 : selectedTimetableIndex,
             timetables: [...timetables.filter((timetable) => timetable.id !== toDeleteId)],
