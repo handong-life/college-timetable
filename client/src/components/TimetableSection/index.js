@@ -6,6 +6,7 @@ import AddIcon from '@material-ui/icons/Add';
 import CreateIcon from '@material-ui/icons/Create';
 import DeleteIcon from '@material-ui/icons/Delete';
 import LectureGrid from './LectureGrid';
+import { sum } from '../../utils/helper';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -14,7 +15,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     overflowY: 'hidden',
-    borderBottom: '1px solid #eaedf1',
+
+    [theme.breakpoints.down('sm')]: {
+      height: '75%',
+    },
   },
 
   header: {
@@ -46,6 +50,10 @@ const useStyles = makeStyles((theme) => ({
     borderTopLeftRadius: '15px',
     borderTopRightRadius: '15px',
     backgroundColor: '#eaedf1',
+
+    [theme.breakpoints.down('sm')]: {
+      height: '40px',
+    },
   },
 
   timetableBody: {
@@ -57,7 +65,12 @@ const useStyles = makeStyles((theme) => ({
     gridTemplateColumns: '0.5fr repeat(5, minmax(0, 1fr))',
     borderTop: '1px solid #eaedf1',
     borderLeft: '1px solid #eaedf1',
+    borderBottom: '1px solid #eaedf1',
     backgroundColor: 'white',
+
+    [theme.breakpoints.down('sm')]: {
+      gridTemplateRows: 'repeat(9, 60px)',
+    },
   },
 
   dayIndicator: {
@@ -85,6 +98,11 @@ const useStyles = makeStyles((theme) => ({
     padding: '1px',
     borderBottom: '1px solid #eaedf1',
     borderRight: '1px solid #eaedf1',
+  },
+
+  creditIndicator: {
+    marginTop: 5,
+    marginRight: 2,
   },
 }));
 
@@ -189,6 +207,11 @@ export default function TimetableSection({
             </Box>
           );
         })}
+      </Box>
+      <Box className={classes.creditIndicator}>
+        <Typography variant="body1" style={{ textAlign: 'right' }}>
+          {sum(lectures, 'credit')}학점
+        </Typography>
       </Box>
     </Box>
   );
