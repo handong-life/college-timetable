@@ -284,7 +284,7 @@ export default function TimetablePage({ logout }) {
         setTimetableTab(({ timetables, selectedTimetableIndex }) => {
           return {
             selectedTimetableIndex:
-              selectedTimetableIndex == timetables.length - 1
+              selectedTimetableIndex === timetables.length - 1
                 ? selectedTimetableIndex - 1
                 : selectedTimetableIndex,
             timetables: [...timetables.filter((timetable) => timetable.id !== toDeleteId)],
