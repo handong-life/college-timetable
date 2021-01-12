@@ -6,7 +6,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 
 import { Lecture, Timetable, User } from '../models';
-import { TopBar, Modal, SearchSection, TimetableSection } from '../components';
+import { Header, Modal, SearchSection, TimetableSection } from '../components';
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -305,7 +305,7 @@ export default function TimetablePage({ logout }) {
 
   return (
     <div className={classes.root}>
-      <TopBar {...{ logout, openFeedbackReportModal }} />
+      <Header {...{ logout, openFeedbackReportModal }} />
       <div className={classes.body}>
         <SearchSection
           {...{
