@@ -51,7 +51,7 @@ export default function App() {
                 !authenticated ? (
                   <Redirect to="/" />
                 ) : (
-                  <TimetablePage {...{ authenticated, logout }} />
+                  <TimetablePage {...{ collegeName: '한동대', authenticated, logout }} />
                 )
               }
             />

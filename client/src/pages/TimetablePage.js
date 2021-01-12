@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function TimetablePage({ logout }) {
+export default function TimetablePage({ collegeName, logout }) {
   const classes = useStyles();
   const [search, setSearch] = useState('');
   const [user, setUser] = useState();
@@ -305,7 +305,7 @@ export default function TimetablePage({ logout }) {
 
   return (
     <div className={classes.root}>
-      <Header {...{ logout, openFeedbackReportModal }} />
+      <Header {...{ collegeName, logout, openFeedbackReportModal }} />
       <div className={classes.body}>
         <SearchSection
           {...{

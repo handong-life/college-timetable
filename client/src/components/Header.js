@@ -54,14 +54,14 @@ const useTopBarStyle = makeStyles((theme) => ({
   },
 }));
 
-export default function Header({ logout, openFeedbackReportModal }) {
+export default function Header({ collegeName, logout, openFeedbackReportModal }) {
   const classes = useTopBarStyle();
 
   return (
     <AppBar className={classes.appBar} position={'relative'} color={'default'}>
       <Box className={classes.front}>
         <img className={classes.icon} src="/timetable.png" />
-        <Typography className={classes.title}>대학시간</Typography>
+        <Typography className={classes.title}>{collegeName}</Typography>
         <Typography className={classes.warning}>베타 테스트 중!</Typography>
       </Box>
       <Tooltip className={classes.gitHubIcon} title="깃헙 링크" arrow>
