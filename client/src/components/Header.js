@@ -1,6 +1,7 @@
 import React from 'react';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { AppBar, Box, IconButton, Typography, Tooltip } from '@material-ui/core';
+import GitHubIcon from '@material-ui/icons/GitHub';
 import FeedbackIcon from '@material-ui/icons/Feedback';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
@@ -45,6 +46,12 @@ const useTopBarStyle = makeStyles((theme) => ({
     fontSize: 14,
     color: 'red',
   },
+
+  gitHubIcon: {
+    [theme.breakpoints.down('sm')]: {
+      display: 'none',
+    },
+  },
 }));
 
 export default function Header({ logout, openFeedbackReportModal }) {
@@ -57,13 +64,18 @@ export default function Header({ logout, openFeedbackReportModal }) {
         <Typography className={classes.title}>대학시간</Typography>
         <Typography className={classes.warning}>베타 테스트 중!</Typography>
       </Box>
+      <Tooltip className={classes.gitHubIcon} title="깃헙 링크" arrow>
+        <IconButton href="https://github.com/zoomKoding/college-timetable">
+          <GitHubIcon />
+        </IconButton>
+      </Tooltip>
       <Tooltip title="피드백 남기기" arrow>
         <IconButton onClick={openFeedbackReportModal}>
           <FeedbackIcon />
         </IconButton>
       </Tooltip>
 
-      <IconButton onClick={logout}>
+      <IconButton title="로그아웃" onClick={logout}>
         <ExitToAppIcon />
       </IconButton>
     </AppBar>
