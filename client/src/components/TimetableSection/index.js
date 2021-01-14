@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { Box, IconButton, ButtonGroup, Tabs, Tab, Typography, Tooltip } from '@material-ui/core';
 
@@ -106,13 +106,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function a11yProps(index) {
-  return {
-    id: `scrollable-auto-tab-${index}`,
-    'aria-controls': `scrollable-auto-tabpanel-${index}`,
-  };
-}
-
 const getLecturesForTimetable = (lectures = []) => {
   const lecturesForTimetable = {};
   lectures.forEach((lecture) =>
@@ -125,6 +118,7 @@ export default function TimetableSection({
   timetables,
   lectures,
   selectedIndex,
+  handleLectureDeleteClick,
   handleSelectedTimetableIndexChange,
   handleTimetableCreate,
   handleTimetableDelete,
@@ -134,7 +128,7 @@ export default function TimetableSection({
   const MAX_PERIOD = 9;
   const classes = useStyles();
   const lecturesForTimetable = getLecturesForTimetable(lectures);
-
+  const [hoveredIndex, setHoveredIndex] = useState(-1);
   const PeriodIndicator = (index) => {
     return (
       <Box className={classes.periodIndicator} key={index}>
@@ -154,23 +148,25 @@ export default function TimetableSection({
   return (
     <Box className={classes.root}>
       <Box className={classes.header}>
-        <Tabs
-          className={classes.tabs}
-          value={selectedIndex}
-          onChange={handleSelectedTimetableIndexChange}
-          indicatorColor="secondary"
-          variant="scrollable"
-          scrollButtons="auto"
-          aria-label="scrollable auto tabs"
-        >
-          {timetables.map((timetable, index) => (
-            <Tab
-              label={<Typography variant="body2">{timetable.title}</Typography>}
-              key={timetable.id}
-              {...a11yProps(index)}
-            />
-          ))}
-        </Tabs>
+        {timetables.length === 0 ? (
+          <div className={classes.tabs}></div>
+        ) : (
+          <Tabs
+            className={classes.tabs}
+            value={selectedIndex}
+            onChange={handleSelectedTimetableIndexChange}
+            indicatorColor="secondary"
+            variant="scrollable"
+            scrollButtons="auto"
+          >
+            {timetables.map((timetable) => (
+              <Tab
+                label={<Typography variant="body2">{timetable.title}</Typography>}
+                key={timetable.id}
+              />
+            ))}
+          </Tabs>
+        )}
         <ButtonGroup size="small" className={classes.buttonGroup}>
           <Tooltip title="시간표 생성" arrow>
             <IconButton onClick={handleTimetableCreate}>
@@ -184,7 +180,7 @@ export default function TimetableSection({
           </Tooltip>
 
           <Tooltip title="시간표 삭제" arrow>
-            <IconButton onClick={() => handleTimetableDelete(timetables[selectedIndex].title)}>
+            <IconButton onClick={handleTimetableDelete}>
               <DeleteIcon />
             </IconButton>
           </Tooltip>
@@ -202,8 +198,17 @@ export default function TimetableSection({
             parseInt(index / TIMETABLE_DAYS.length + 1);
 
           return (
-            <Box className={classes.periodGrid} key={index}>
-              <LectureGrid lecture={lecturesForTimetable[period]} key={index} />
+            <Box
+              className={classes.periodGrid}
+              key={index}
+              onMouseOver={() => setHoveredIndex(lecturesForTimetable[period]?.id || -1)}
+            >
+              <LectureGrid
+                lecture={lecturesForTimetable[period]}
+                handleDeleteClick={handleLectureDeleteClick}
+                key={index}
+                isHovered={hoveredIndex === lecturesForTimetable[period]?.id}
+              />
             </Box>
           );
         })}
