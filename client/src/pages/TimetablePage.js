@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Axios } from '../lib/axios';
 import { makeStyles } from '@material-ui/core/styles';
-import Snackbar from '@material-ui/core/Snackbar';
+import { Snackbar } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
 
 import { Lecture, Timetable, User } from '../models';
@@ -42,7 +42,7 @@ export default function TimetablePage({ collegeName, logout }) {
   const [searchResults, setSearchResults] = useState([]);
   const [bookmarks, setBookmarks] = useState([]);
   const [{ selectedTimetableIndex, timetables }, setTimetableTab] = useState({
-    selectedTimetableIndex: 0,
+    selectedTimetableIndex: -1,
     timetables: [],
   });
   const [timetableLectures, setTimetableLectures] = useState([]);
@@ -58,12 +58,17 @@ export default function TimetablePage({ collegeName, logout }) {
         setBookmarks(
           data.lectures.map((lecture) => ({ ...new Lecture(lecture), isBookmarked: true })),
         );
-        setTimetableTab((timetableTab) => ({ ...timetableTab, timetables: data.timetables }));
+        setTimetableTab({
+          selectedTimetableIndex: data.timetables.length === 0 ? -1 : 0,
+          timetables: data.timetables,
+        });
         setTimetableLectures(
-          data.timetables[0].lectures.map((lecture) => ({
-            ...new Lecture(lecture),
-            isAdded: true,
-          })),
+          data.timetables[0]
+            ? data.timetables[0].lectures.map((lecture) => ({
+                ...new Lecture(lecture),
+                isAdded: true,
+              }))
+            : [],
         );
       });
   }, []);
@@ -82,13 +87,7 @@ export default function TimetablePage({ collegeName, logout }) {
   }, [bookmarks]);
 
   useEffect(() => {
-    if (user) {
-      if (selectedTimetableIndex === -1) {
-        handleTimetableCreate('예비시간표1');
-      } else {
-        getTimetable();
-      }
-    }
+    if (user) getTimetable();
   }, [selectedTimetableIndex]);
 
   const getSearchResults = () => {
@@ -105,6 +104,9 @@ export default function TimetablePage({ collegeName, logout }) {
   };
 
   const getTimetable = () => {
+    if (selectedTimetableIndex === -1) {
+      return setTimetableLectures([]);
+    }
     Axios()
       .get(`/timetable/${timetables[selectedTimetableIndex].id}`)
       .then(({ data: timetable }) => {
@@ -157,6 +159,10 @@ export default function TimetablePage({ collegeName, logout }) {
   };
 
   const handleAddClick = (lecture) => {
+    if (selectedTimetableIndex === -1) {
+      return setErrorMessage('현재 시간표가 없습니다!');
+    }
+
     const isLectureDup = timetableLectures.findIndex(({ id }) => id === lecture.id) !== -1;
 
     if (isLectureDup) {
@@ -227,6 +233,9 @@ export default function TimetablePage({ collegeName, logout }) {
   };
 
   const openTimetableEditModal = () => {
+    if (selectedTimetableIndex === -1) {
+      return setErrorMessage('수정할 시간표가 없습니다!');
+    }
     setModalInfo({
       openModal: true,
       handleModalInputSubmit: handleTimetableEdit,
@@ -247,12 +256,15 @@ export default function TimetablePage({ collegeName, logout }) {
     });
   };
 
-  const openTimetableDeleteModal = (title) => {
+  const openTimetableDeleteModal = () => {
+    if (selectedTimetableIndex === -1) {
+      return setErrorMessage('삭제할 시간표가 없습니다!');
+    }
     setModalInfo({
       openModal: true,
       handleModalInputSubmit: handleTimetableDelete,
       handleModalClose,
-      titleText: `'${title}'을(를) 삭제하시겠습니까?`,
+      titleText: `'${timetables[selectedTimetableIndex].title}'을(를) 삭제하시겠습니까?`,
       buttonText: '확인',
     });
   };
