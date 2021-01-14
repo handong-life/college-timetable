@@ -125,6 +125,7 @@ export default function TimetableSection({
   timetables,
   lectures,
   selectedIndex,
+  handleLectureDeleteClick,
   handleSelectedTimetableIndexChange,
   handleTimetableCreate,
   handleTimetableDelete,
@@ -203,7 +204,11 @@ export default function TimetableSection({
 
           return (
             <Box className={classes.periodGrid} key={index}>
-              <LectureGrid lecture={lecturesForTimetable[period]} key={index} />
+              <LectureGrid
+                lecture={lecturesForTimetable[period]}
+                handleDeleteClick={handleLectureDeleteClick}
+                key={index}
+              />
             </Box>
           );
         })}

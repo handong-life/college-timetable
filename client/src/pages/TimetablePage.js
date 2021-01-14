@@ -196,6 +196,7 @@ export default function TimetablePage({ collegeName, logout }) {
         setTimetableLectures([
           ...timetableLectures.filter((timetableLecture) => timetableLecture.id !== lecture.id),
         ]);
+        handleModalClose();
       });
   };
 
@@ -233,6 +234,16 @@ export default function TimetablePage({ collegeName, logout }) {
       titleText: '시간표 이름 변경',
       placeholderText: '시간표 이름',
       buttonText: '변경',
+    });
+  };
+
+  const openLectureDeleteModal = (lecture) => {
+    setModalInfo({
+      openModal: true,
+      handleModalInputSubmit: () => handleDeleteClick(lecture),
+      handleModalClose,
+      titleText: `'${lecture.name}'을(를) 삭제하시겠습니까?`,
+      buttonText: '확인',
     });
   };
 
@@ -314,7 +325,7 @@ export default function TimetablePage({ collegeName, logout }) {
             handleSearchSubmit,
             handleClearClick,
             handleAddClick,
-            handleDeleteClick,
+            handleDeleteClick: openLectureDeleteModal,
             handleBookmarkClick,
             handleUnbookmarkClick,
             lectures: [searchResults, bookmarks, timetableLectures],
@@ -326,6 +337,7 @@ export default function TimetablePage({ collegeName, logout }) {
             selectedIndex: selectedTimetableIndex,
             lectures: timetableLectures,
             handleSelectedTimetableIndexChange,
+            handleLectureDeleteClick: openLectureDeleteModal,
             handleTimetableCreate: openTimetableCreateModal,
             handleTimetableDelete: openTimetableDeleteModal,
             handleTimetableEdit: openTimetableEditModal,
