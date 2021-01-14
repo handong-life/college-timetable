@@ -60,7 +60,7 @@ export default function Header({ collegeName, logout, openFeedbackReportModal })
   return (
     <AppBar className={classes.appBar} position={'relative'} color={'default'}>
       <Box className={classes.front}>
-        <img className={classes.icon} src="/timetable.png" />
+        <img className={classes.icon} alt="대학 시간 로고" src="/timetable.png" />
         <Typography className={classes.title}>{collegeName}</Typography>
         <Typography className={classes.warning}>
           {process.env.REACT_APP_HANDONG_ALERT_MESSAGE}

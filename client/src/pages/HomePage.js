@@ -69,7 +69,7 @@ export default function HomePage() {
     <div className={classes.root}>
       <div className={classes.body}>
         <div className={classes.header} position={'relative'} color={'default'}>
-          <img className={classes.icon} src="/timetable.png" />
+          <img className={classes.icon} alt="대학시간 로고" src="/timetable.png" />
           <Typography className={classes.title}>대학시간</Typography>
         </div>
         <Typography className={classes.subtitle}>대학교 예비 수강신청 도우미</Typography>
@@ -79,7 +79,7 @@ export default function HomePage() {
           variant="text"
           href={process.env.REACT_APP_GOOGLE_SIGNIN_URL}
         >
-          <img className={classes.google} src="/google.png" />
+          <img className={classes.google} alt="Google Icon" src="/google.png" />
           학교 계정으로 시작하기
         </Button>
         <Typography className={classes.warning}>
