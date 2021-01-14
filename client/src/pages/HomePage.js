@@ -82,7 +82,9 @@ export default function HomePage() {
           <img className={classes.google} src="/google.png" />
           학교 계정으로 시작하기
         </Button>
-        <Typography className={classes.warning}>현재 베타 테스트 진행 중입니다!</Typography>
+        <Typography className={classes.warning}>
+          {process.env.REACT_APP_HOME_ALERT_MESSAGE}
+        </Typography>
       </div>
     </div>
   );
