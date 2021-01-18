@@ -40,6 +40,7 @@ export default function TimetablePage({ collegeName, logout }) {
   const [search, setSearch] = useState('');
   const [user, setUser] = useState();
   const [searchResults, setSearchResults] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(false);
   const [bookmarks, setBookmarks] = useState([]);
   const [{ selectedTimetableIndex, timetables }, setTimetableTab] = useState({
     selectedTimetableIndex: -1,
@@ -49,6 +50,7 @@ export default function TimetablePage({ collegeName, logout }) {
   const [selectedSearchTabIndex, setSelectedSearchTabIndex] = useState(0);
   const [errorMessage, setErrorMessage] = useState('');
   const [modalInfo, setModalInfo] = useState({ openModal: false });
+  const [hideSearchTab, setHideSearchTab] = useState(false);
 
   useEffect(() => {
     Axios()
@@ -91,16 +93,19 @@ export default function TimetablePage({ collegeName, logout }) {
   }, [selectedTimetableIndex]);
 
   const getSearchResults = () => {
+    setSearchLoading(true);
+
     Axios()
       .get(`/search?search=${search}`)
-      .then((res) =>
+      .then((res) => {
         setSearchResults(
           res.data.map((lecture) => ({
             ...new Lecture(lecture),
             isBookmarked: bookmarks.find((bookmark) => bookmark.id === lecture.id),
           })),
-        ),
-      );
+        );
+        setSearchLoading(false);
+      });
   };
 
   const getTimetable = () => {
@@ -321,33 +326,38 @@ export default function TimetablePage({ collegeName, logout }) {
   const handleFeedbackReport = (feedback) => {
     Axios()
       .post(`/user/feedback`, { feedback })
-      .then((res) => {
-        handleModalClose();
-      });
+      .then(() => handleModalClose());
   };
+
+  const toggleHideSearchTab = () => setHideSearchTab(!hideSearchTab);
 
   return (
     <div className={classes.root}>
       <Header {...{ collegeName, logout, openFeedbackReportModal }} />
       <div className={classes.body}>
-        <SearchSection
-          {...{
-            selectedSearchTabIndex,
-            handleSelectedSearchTabIndex,
-            handleSearchSubmit,
-            handleClearClick,
-            handleAddClick,
-            handleDeleteClick: openLectureDeleteModal,
-            handleBookmarkClick,
-            handleUnbookmarkClick,
-            lectures: [searchResults, bookmarks, timetableLectures],
-          }}
-        />
+        {!hideSearchTab && (
+          <SearchSection
+            {...{
+              lectures: [searchResults, bookmarks, timetableLectures],
+              searchLoading,
+              selectedSearchTabIndex,
+              handleSelectedSearchTabIndex,
+              handleSearchSubmit,
+              handleClearClick,
+              handleAddClick,
+              handleDeleteClick: openLectureDeleteModal,
+              handleBookmarkClick,
+              handleUnbookmarkClick,
+            }}
+          />
+        )}
         <TimetableSection
           {...{
             timetables,
             selectedIndex: selectedTimetableIndex,
             lectures: timetableLectures,
+            hideSearchTab,
+            toggleHideSearchTab,
             handleSelectedTimetableIndexChange,
             handleLectureDeleteClick: openLectureDeleteModal,
             handleTimetableCreate: openTimetableCreateModal,
