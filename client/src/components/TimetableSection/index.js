@@ -5,6 +5,8 @@ import { Box, IconButton, ButtonGroup, Tabs, Tab, Typography, Tooltip } from '@m
 import AddIcon from '@material-ui/icons/Add';
 import CreateIcon from '@material-ui/icons/Create';
 import DeleteIcon from '@material-ui/icons/Delete';
+import AspectRatioIcon from '@material-ui/icons/AspectRatio';
+
 import LectureGrid from './LectureGrid';
 import { sum } from '../../utils/helper';
 
@@ -17,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     overflowY: 'hidden',
 
     [theme.breakpoints.down('sm')]: {
-      height: '75%',
+      height: (props) => (props.hideSearchTab ? '100%' : '75%'),
     },
   },
 
@@ -58,7 +60,6 @@ const useStyles = makeStyles((theme) => ({
 
   timetableBody: {
     width: '100%',
-    height: '100%',
     display: 'grid',
     overflowY: 'scroll',
     gridTemplateRows: 'repeat(9, 80px)',
@@ -100,9 +101,20 @@ const useStyles = makeStyles((theme) => ({
     borderRight: '1px solid #eaedf1',
   },
 
-  creditIndicator: {
+  bottomBar: {
+    display: 'flex',
+    flexDirection: 'row-reverse',
+    justifyContent: 'space-between',
     marginTop: 5,
     marginRight: 2,
+  },
+
+  hideButton: {
+    marginLeft: 2,
+    display: 'none',
+    [theme.breakpoints.down('sm')]: {
+      display: 'flex',
+    },
   },
 }));
 
@@ -118,15 +130,18 @@ export default function TimetableSection({
   timetables,
   lectures,
   selectedIndex,
+  hideSearchTab,
+  toggleHideSearchTab,
   handleLectureDeleteClick,
   handleSelectedTimetableIndexChange,
   handleTimetableCreate,
   handleTimetableDelete,
   handleTimetableEdit,
 }) {
+  console.log(hideSearchTab);
   const TIMETABLE_DAYS = ['', '월', '화', '수', '목', '금'];
   const MAX_PERIOD = 9;
-  const classes = useStyles();
+  const classes = useStyles({ hideSearchTab });
   const lecturesForTimetable = getLecturesForTimetable(lectures);
   const [hoveredIndex, setHoveredIndex] = useState(-1);
   const PeriodIndicator = (index) => {
@@ -213,10 +228,14 @@ export default function TimetableSection({
           );
         })}
       </Box>
-      <Box className={classes.creditIndicator}>
-        <Typography variant="body1" style={{ textAlign: 'right' }}>
-          {sum(lectures, 'credit')}학점
-        </Typography>
+
+      <Box className={classes.bottomBar}>
+        <AspectRatioIcon
+          className={classes.hideButton}
+          onClick={toggleHideSearchTab}
+          style={{ color: 'rgba(0, 0, 0, 0.54)' }}
+        />
+        <Typography variant="body1">{sum(lectures, 'credit')}학점</Typography>
       </Box>
     </Box>
   );
