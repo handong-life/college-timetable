@@ -56,6 +56,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SearchSection({
   lectures,
+  searchLoading,
   selectedSearchTabIndex,
   handleSelectedSearchTabIndex,
   handleSearchSubmit,
@@ -119,11 +120,15 @@ export default function SearchSection({
           </Box>
         ) : (
           <Box className={classes.notFound}>
-            {notFoundMessages[selectedSearchTabIndex].map((message, index) => (
-              <Typography variant={'body1'} key={index}>
-                {message}
-              </Typography>
-            ))}
+            {searchLoading ? (
+              <Typography variant={'body1'}> 검색 결과 중!</Typography>
+            ) : (
+              notFoundMessages[selectedSearchTabIndex].map((message, index) => (
+                <Typography variant={'body1'} key={index}>
+                  {message}
+                </Typography>
+              ))
+            )}
           </Box>
         )}
       </Box>
