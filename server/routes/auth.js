@@ -1,7 +1,8 @@
 const { Router } = require('express');
 const JWT = require('jsonwebtoken');
-const router = Router();
 const passport = require('passport');
+const router = Router();
+
 const { isValidJwtToken } = require('../middlewares/auth');
 
 router.get(
