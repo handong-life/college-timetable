@@ -27,7 +27,6 @@ const useStyles = makeStyles((theme) => {
 
     hoverLayer: {
       opacity: (props) => (props.isHovered ? 1 : 0),
-      position: 'absolute',
     },
   };
 });
@@ -46,9 +45,9 @@ export default function LectureGrid({ lecture, handleDeleteClick, isHovered }) {
       </Typography>
       <Typography className={classes.item}>{lecture.professor}</Typography>
       <Typography className={classes.item}>{lecture.period}</Typography>
-      <Box className={classes.hoverLayer}>
+      {/* <Box className={classes.hoverLayer}>
         <DeleteIcon style={{ color: 'rgba(0, 0, 0, 0.54)' }} />
-      </Box>
+      </Box> */}
     </Box>
   ) : (
     <></>
