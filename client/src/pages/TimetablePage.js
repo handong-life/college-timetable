@@ -37,8 +37,13 @@ const useStyles = makeStyles((theme) => ({
 
 export default function TimetablePage({ collegeName, logout }) {
   const classes = useStyles();
-  const [search, setSearch] = useState('');
+
   const [user, setUser] = useState();
+  const [search, setSearch] = useState('');
+  const [pagination, setPagination] = useState({
+    current: 0,
+    total: 0,
+  });
   const [searchResults, setSearchResults] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [bookmarks, setBookmarks] = useState([]);
@@ -76,7 +81,7 @@ export default function TimetablePage({ collegeName, logout }) {
   }, []);
 
   useEffect(() => {
-    if (search.length !== 0) getSearchResults();
+    if (search.length !== 0) getSearchResults(search, 1);
   }, [search]);
 
   useEffect(() => {
@@ -92,18 +97,24 @@ export default function TimetablePage({ collegeName, logout }) {
     if (user) getTimetable();
   }, [selectedTimetableIndex]);
 
-  const getSearchResults = () => {
+  const getSearchResults = (search, page) => {
     setSearchLoading(true);
 
     Axios()
-      .get(`/search?search=${search}`)
-      .then((res) => {
+      .get(`/search?search=${search}${page ? `&page=${page}` : ''} `)
+      .then(({ data: { lectures, pages } }) => {
         setSearchResults(
-          res.data.map((lecture) => ({
+          lectures.map((lecture) => ({
             ...new Lecture(lecture),
             isBookmarked: bookmarks.find((bookmark) => bookmark.id === lecture.id),
           })),
         );
+
+        setPagination({
+          current: pages === 0 ? 0 : page,
+          total: pages,
+        });
+
         setSearchLoading(false);
       });
   };
@@ -331,6 +342,10 @@ export default function TimetablePage({ collegeName, logout }) {
 
   const toggleHideSearchTab = () => setHideSearchTab(!hideSearchTab);
 
+  const handlePageChange = (value) => {
+    getSearchResults(search, value);
+  };
+
   return (
     <div className={classes.root}>
       <Header {...{ collegeName, logout, openFeedbackReportModal }} />
@@ -339,6 +354,7 @@ export default function TimetablePage({ collegeName, logout }) {
           <SearchSection
             {...{
               lectures: [searchResults, bookmarks, timetableLectures],
+              pagination,
               searchLoading,
               selectedSearchTabIndex,
               handleSelectedSearchTabIndex,
@@ -348,6 +364,7 @@ export default function TimetablePage({ collegeName, logout }) {
               handleDeleteClick: openLectureDeleteModal,
               handleBookmarkClick,
               handleUnbookmarkClick,
+              handlePageChange,
             }}
           />
         )}
