@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Tabs, Tab, Box, Typography } from '@material-ui/core';
 import Pagination from '@material-ui/lab/Pagination';
@@ -15,8 +15,7 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'hidden',
     marginRight: '30px',
     [theme.breakpoints.down('sm')]: {
-      marginRight: '0',
-      marginTop: '5px',
+      margin: '5px 0 7px 0',
     },
   },
 
@@ -80,6 +79,12 @@ export default function SearchSection({
 }) {
   const classes = useStyles();
   const searchListRef = useRef();
+
+  useEffect(() => {
+    if (searchListRef?.current) {
+      searchListRef.current.scrollTo(0, 0);
+    }
+  }, [pagination]);
 
   const notFoundMessages = [
     [
@@ -145,16 +150,15 @@ export default function SearchSection({
           </Box>
         )}
       </Box>
-      <Box className={classes.pagination}>
-        <Pagination
-          page={pagination.current}
-          count={pagination.total}
-          onChange={(event, value) => {
-            searchListRef.current.scrollTop = 0;
-            handlePageChange(value);
-          }}
-        />
-      </Box>
+      {selectedSearchTabIndex === 0 && (
+        <Box className={classes.pagination}>
+          <Pagination
+            page={pagination.current}
+            count={pagination.total}
+            onChange={handlePageChange}
+          />
+        </Box>
+      )}
     </Box>
   );
 }
