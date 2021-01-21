@@ -107,6 +107,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     marginTop: 5,
     marginRight: 2,
+    minHeight: 'fit-content',
   },
 
   hideButton: {
