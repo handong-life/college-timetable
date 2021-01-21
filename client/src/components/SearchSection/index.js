@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Tabs, Tab, Box, Typography } from '@material-ui/core';
+import Pagination from '@material-ui/lab/Pagination';
+
 import SearchBar from './SearchBar';
 import LectureCard from './LectureCard';
 
@@ -52,10 +54,19 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     color: 'gray',
   },
+
+  pagination: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    minHeight: 'fit-content',
+    marginTop: 5,
+  },
 }));
 
 export default function SearchSection({
   lectures,
+  pagination,
   searchLoading,
   selectedSearchTabIndex,
   handleSelectedSearchTabIndex,
@@ -65,8 +76,10 @@ export default function SearchSection({
   handleDeleteClick,
   handleBookmarkClick,
   handleUnbookmarkClick,
+  handlePageChange,
 }) {
   const classes = useStyles();
+  const searchListRef = useRef();
 
   const notFoundMessages = [
     [
@@ -106,7 +119,7 @@ export default function SearchSection({
       </Tabs>
       <Box className={classes.searchTab}>
         {lectures[selectedSearchTabIndex].length !== 0 ? (
-          <Box className={classes.lectureList}>
+          <Box className={classes.lectureList} ref={searchListRef}>
             {lectures[selectedSearchTabIndex].map((lecture) => (
               <LectureCard
                 key={lecture.id}
@@ -121,7 +134,7 @@ export default function SearchSection({
         ) : (
           <Box className={classes.notFound}>
             {searchLoading ? (
-              <Typography variant={'body1'}> 검색 결과 중!</Typography>
+              <Typography variant={'body1'}> 검색 결과 로딩 중!</Typography>
             ) : (
               notFoundMessages[selectedSearchTabIndex].map((message, index) => (
                 <Typography variant={'body1'} key={index}>
@@ -131,6 +144,16 @@ export default function SearchSection({
             )}
           </Box>
         )}
+      </Box>
+      <Box className={classes.pagination}>
+        <Pagination
+          page={pagination.current}
+          count={pagination.total}
+          onChange={(event, value) => {
+            searchListRef.current.scrollTop = 0;
+            handlePageChange(value);
+          }}
+        />
       </Box>
     </Box>
   );
