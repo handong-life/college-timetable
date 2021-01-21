@@ -84,7 +84,7 @@ export default function SearchSection({
     if (searchListRef?.current) {
       searchListRef.current.scrollTo(0, 0);
     }
-  }, [pagination]);
+  }, [pagination, selectedSearchTabIndex]);
 
   const notFoundMessages = [
     [
