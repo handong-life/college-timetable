@@ -139,7 +139,6 @@ export default function TimetableSection({
   handleTimetableDelete,
   handleTimetableEdit,
 }) {
-  console.log(hideSearchTab);
   const TIMETABLE_DAYS = ['', '월', '화', '수', '목', '금'];
   const MAX_PERIOD = 9;
   const classes = useStyles({ hideSearchTab });
