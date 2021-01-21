@@ -342,7 +342,7 @@ export default function TimetablePage({ collegeName, logout }) {
 
   const toggleHideSearchTab = () => setHideSearchTab(!hideSearchTab);
 
-  const handlePageChange = (value) => {
+  const handlePageChange = (event, value) => {
     getSearchResults(search, value);
   };
 
