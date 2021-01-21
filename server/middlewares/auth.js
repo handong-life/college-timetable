@@ -10,7 +10,6 @@ const JWTConfig = {
 const JWTVerify = async ({ userId }, done) => {
   try {
     const user = await User.findOne({ where: { id: userId } });
-    console.log(user);
     if (user) {
       done(null, user);
       return;

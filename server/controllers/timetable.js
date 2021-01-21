@@ -35,7 +35,6 @@ exports.deleteTimetable = async (req, res) => {
 
 exports.addLecture = async (req, res) => {
   const { timetableId, lectureId } = req.params;
-  console.log(timetableId, lectureId);
   await TimetableLectureRelation.create({
     timetableId: +timetableId,
     lectureId: +lectureId,
