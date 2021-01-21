@@ -99,17 +99,16 @@ export default function TimetablePage({ collegeName, logout }) {
 
   const getSearchResults = (search, page) => {
     setSearchLoading(true);
-
     Axios()
       .get(`/search?search=${search}${page ? `&page=${page}` : ''} `)
       .then(({ data: { lectures, pages } }) => {
+        setSelectedSearchTabIndex(0);
         setSearchResults(
           lectures.map((lecture) => ({
             ...new Lecture(lecture),
             isBookmarked: bookmarks.find((bookmark) => bookmark.id === lecture.id),
           })),
         );
-
         setPagination({
           current: pages === 0 ? 0 : page,
           total: pages,
@@ -149,7 +148,6 @@ export default function TimetablePage({ collegeName, logout }) {
   };
 
   const handleSearchSubmit = (search) => {
-    setSelectedSearchTabIndex(0);
     setSearch(search);
   };
 
@@ -342,7 +340,7 @@ export default function TimetablePage({ collegeName, logout }) {
 
   const toggleHideSearchTab = () => setHideSearchTab(!hideSearchTab);
 
-  const handlePageChange = (value) => {
+  const handlePageChange = (event, value) => {
     getSearchResults(search, value);
   };
 

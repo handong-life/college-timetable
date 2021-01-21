@@ -14,5 +14,5 @@ exports.getSearchResults = async (req, res) => {
     offset: page ? limit * (+page - 1) : 0,
   });
 
-  res.send({ pages: count === 0 ? 0 : Math.ceil(count / limit) + 1, lectures });
+  res.send({ pages: count === 0 ? 0 : Math.ceil(count / limit), lectures });
 };
