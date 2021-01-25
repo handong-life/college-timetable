@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import { Axios } from '../lib/axios';
+import JWT from 'jsonwebtoken';
+
 import { makeStyles } from '@material-ui/core/styles';
 import { Snackbar } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
@@ -260,6 +262,19 @@ export default function TimetablePage({ collegeName, logout }) {
     });
   };
 
+  const openTimetableShareModal = () => {
+    if (selectedTimetableIndex === -1) {
+      return setErrorMessage('공유할 시간표가 없습니다!');
+    }
+    setModalInfo({
+      openModal: true,
+      handleModalInputSubmit: handleTimetableShare,
+      handleModalClose,
+      titleText: '공유 링크를 복사하시겠습니까?',
+      buttonText: '복사',
+    });
+  };
+
   const openLectureDeleteModal = (lecture) => {
     setModalInfo({
       openModal: true,
@@ -293,6 +308,27 @@ export default function TimetablePage({ collegeName, logout }) {
         }));
         handleModalClose();
       });
+  };
+
+  const handleTimetableShare = () => {
+    const value = JWT.sign(timetables[selectedTimetableIndex].id, process.env.REACT_APP_JWT_SECRET);
+
+    const textarea = document.createElement('textarea');
+    textarea.textContent = `${process.env.REACT_APP_DOMAIN_URL}/share/${value}`;
+
+    document.body.appendChild(textarea);
+
+    const selection = document.getSelection();
+    const range = document.createRange();
+    range.selectNode(textarea);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    document.execCommand('copy');
+    selection.removeAllRanges();
+
+    document.body.removeChild(textarea);
+
+    handleModalClose();
   };
 
   const handleTimetableEdit = (title) => {
@@ -378,6 +414,7 @@ export default function TimetablePage({ collegeName, logout }) {
             handleTimetableCreate: openTimetableCreateModal,
             handleTimetableDelete: openTimetableDeleteModal,
             handleTimetableEdit: openTimetableEditModal,
+            handleTimetableShare: openTimetableShareModal,
           }}
         />
       </div>
