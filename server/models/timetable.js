@@ -6,7 +6,10 @@ class Timetable extends Model {
       {
         title: DataTypes.STRING,
         userId: DataTypes.INTEGER,
-        order: DataTypes.INTEGER,
+        sharedViewCount: {
+          type: DataTypes.INTEGER,
+          defaultValue: 0,
+        },
       },
       {
         tableName: 'Timetable',
