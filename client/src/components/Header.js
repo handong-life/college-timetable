@@ -54,7 +54,7 @@ const useTopBarStyle = makeStyles((theme) => ({
   },
 }));
 
-export default function Header({ collegeName, logout, openFeedbackReportModal }) {
+export default function Header({ collegeName, logout, openFeedbackReportModal, isSharePage }) {
   const classes = useTopBarStyle();
 
   return (
@@ -66,20 +66,31 @@ export default function Header({ collegeName, logout, openFeedbackReportModal })
           {process.env.REACT_APP_HANDONG_ALERT_MESSAGE}
         </Typography>
       </Box>
-      <Tooltip className={classes.gitHubIcon} title="깃헙 링크" arrow>
-        <IconButton href="https://github.com/zoomKoding/college-timetable">
-          <GitHubIcon />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title="피드백 남기기" arrow>
-        <IconButton onClick={openFeedbackReportModal}>
-          <FeedbackIcon />
-        </IconButton>
-      </Tooltip>
-
-      <IconButton title="로그아웃" onClick={logout}>
-        <ExitToAppIcon />
-      </IconButton>
+      {isSharePage ? (
+        <>
+          <Tooltip className={classes.gitHubIcon} title="깃헙 링크" arrow>
+            <IconButton href="https://github.com/zoomKoding/college-timetable">
+              <GitHubIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="피드백 남기기" arrow>
+            <IconButton onClick={openFeedbackReportModal}>
+              <FeedbackIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="로그아웃" arrow>
+            <IconButton title="로그아웃" onClick={logout}>
+              <ExitToAppIcon />
+            </IconButton>
+          </Tooltip>
+        </>
+      ) : (
+        <>
+          <IconButton title="로그인" href={'/'}>
+            <ExitToAppIcon />
+          </IconButton>
+        </>
+      )}
     </AppBar>
   );
 }
