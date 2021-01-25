@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-d
 import { useCookies } from 'react-cookie';
 
 import { ThemeProvider } from '@material-ui/core/styles';
-import { HomePage, TimetablePage, NotFoundPage } from './pages';
+import { HomePage, TimetablePage, SharePage, NotFoundPage } from './pages';
 import theme from './theme';
 import { Axios } from './lib/axios';
 import { storage } from './utils/storage';
@@ -55,6 +55,7 @@ export default function App() {
                 )
               }
             />
+            <Route path="/share/:id" component={SharePage} />
             <Route component={NotFoundPage} />
           </Switch>
         </Router>
