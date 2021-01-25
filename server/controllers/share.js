@@ -16,6 +16,10 @@ exports.getTimetable = async (req, res) => {
         through: TimetableLectureRelation,
       },
     });
+
+    if (!timetable) return res.sendStatus(404);
+
+    timetable.increment('sharedViewCount');
     res.send(timetable);
   });
 };
