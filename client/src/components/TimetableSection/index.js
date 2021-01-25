@@ -5,8 +5,9 @@ import { Box, IconButton, ButtonGroup, Tabs, Tab, Typography, Tooltip } from '@m
 import AddIcon from '@material-ui/icons/Add';
 import CreateIcon from '@material-ui/icons/Create';
 import DeleteIcon from '@material-ui/icons/Delete';
-import AspectRatioIcon from '@material-ui/icons/AspectRatio';
-
+import ShareIcon from '@material-ui/icons/Share';
+import FullscreenIcon from '@material-ui/icons/Fullscreen';
+import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import LectureGrid from './LectureGrid';
 import { sum } from '../../utils/helper';
 
@@ -117,6 +118,12 @@ const useStyles = makeStyles((theme) => ({
       display: 'flex',
     },
   },
+
+  creditSum: {
+    display: 'flex',
+    alignItems: 'center',
+    marginRight: '5px',
+  },
 }));
 
 const getLecturesForTimetable = (lectures = []) => {
@@ -138,12 +145,15 @@ export default function TimetableSection({
   handleTimetableCreate,
   handleTimetableDelete,
   handleTimetableEdit,
+  handleTimetableShare,
+  isSharePage,
 }) {
   const TIMETABLE_DAYS = ['', '월', '화', '수', '목', '금'];
   const MAX_PERIOD = 9;
   const classes = useStyles({ hideSearchTab });
   const lecturesForTimetable = getLecturesForTimetable(lectures);
   const [hoveredIndex, setHoveredIndex] = useState(-1);
+
   const PeriodIndicator = (index) => {
     return (
       <Box className={classes.periodIndicator} key={index}>
@@ -182,24 +192,35 @@ export default function TimetableSection({
             ))}
           </Tabs>
         )}
-        <ButtonGroup size="small" className={classes.buttonGroup}>
-          <Tooltip title="시간표 생성" arrow>
-            <IconButton onClick={handleTimetableCreate}>
-              <AddIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="시간표 이름 수정" arrow>
-            <IconButton onClick={handleTimetableEdit}>
-              <CreateIcon />
-            </IconButton>
-          </Tooltip>
+        {!isSharePage ? (
+          <ButtonGroup size="small" className={classes.buttonGroup}>
+            <Tooltip title="시간표 생성" arrow>
+              <IconButton onClick={handleTimetableCreate}>
+                <AddIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="시간표 이름 수정" arrow>
+              <IconButton onClick={handleTimetableEdit}>
+                <CreateIcon />
+              </IconButton>
+            </Tooltip>
 
-          <Tooltip title="시간표 삭제" arrow>
-            <IconButton onClick={handleTimetableDelete}>
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-        </ButtonGroup>
+            <Tooltip title="시간표 삭제" arrow>
+              <IconButton onClick={handleTimetableDelete}>
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="시간표 공유" arrow>
+              <IconButton onClick={handleTimetableShare}>
+                <ShareIcon />
+              </IconButton>
+            </Tooltip>
+          </ButtonGroup>
+        ) : (
+          <Box className={classes.creditSum}>
+            <Typography variant="body1">총 {sum(lectures, 'credit')}학점</Typography>
+          </Box>
+        )}
       </Box>
 
       <Box className={classes.timetableHeader}>
@@ -220,7 +241,7 @@ export default function TimetableSection({
             >
               <LectureGrid
                 lecture={lecturesForTimetable[period]}
-                handleDeleteClick={handleLectureDeleteClick}
+                handleDeleteClick={isSharePage ? () => {} : handleLectureDeleteClick}
                 key={index}
                 isHovered={hoveredIndex === lecturesForTimetable[period]?.id}
               />
@@ -228,15 +249,24 @@ export default function TimetableSection({
           );
         })}
       </Box>
-
-      <Box className={classes.bottomBar}>
-        <AspectRatioIcon
-          className={classes.hideButton}
-          onClick={toggleHideSearchTab}
-          style={{ color: 'rgba(0, 0, 0, 0.54)' }}
-        />
-        <Typography variant="body1">{sum(lectures, 'credit')}학점</Typography>
-      </Box>
+      {!isSharePage && (
+        <Box className={classes.bottomBar}>
+          {hideSearchTab ? (
+            <FullscreenExitIcon
+              className={classes.hideButton}
+              onClick={toggleHideSearchTab}
+              style={{ color: 'rgba(0, 0, 0, 0.54)' }}
+            />
+          ) : (
+            <FullscreenIcon
+              className={classes.hideButton}
+              onClick={toggleHideSearchTab}
+              style={{ color: 'rgba(0, 0, 0, 0.54)' }}
+            />
+          )}
+          <Typography variant="body1">총 {sum(lectures, 'credit')}학점</Typography>
+        </Box>
+      )}
     </Box>
   );
 }
