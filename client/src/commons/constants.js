@@ -33,7 +33,6 @@ export const SNACKBAR_ACTIONS = {
   ALERT_LECTURE_NAME_DUP: 'alertLectureNameDup',
   ALERT_PERIOD_DUP: 'alertPeriodDup',
   ALERT_SHARE_LINK_COPIED: 'alertShareLinkCopied',
-  CLOSE: 'close',
 };
 
 export const MODAL_ACTIONS = {
@@ -43,5 +42,4 @@ export const MODAL_ACTIONS = {
   OPEN_EDIT_TIMETABLE_MODAL: 'openEditTimetableModal',
   OPEN_SHARE_TIMETABLE_MODAL: 'openShareTimetableModal',
   OPEN_FEEDBACK_MODAL: 'openFeedbackModal',
-  CLOSE: 'close',
 };
