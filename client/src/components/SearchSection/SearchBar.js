@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import { InputBase, Box } from '@material-ui/core';
+import { InputBase, Box, makeStyles } from '@material-ui/core';
 
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
@@ -51,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SearchBar({ initialSearch = '', handleSearchSubmit, handleClearClick }) {
+export default function SearchBar({ initialSearch = '', handleSearchSubmit }) {
   const classes = useStyles();
   const clearIconRef = useRef();
   const inputRef = useRef();
@@ -59,7 +58,7 @@ export default function SearchBar({ initialSearch = '', handleSearchSubmit, hand
 
   const onSubmit = (e) => {
     e.preventDefault();
-    handleSearchSubmit(search);
+    if (search.trim().length !== 0) handleSearchSubmit(search.trim());
   };
 
   return (
@@ -81,7 +80,6 @@ export default function SearchBar({ initialSearch = '', handleSearchSubmit, hand
             onClick={() => {
               setSearch('');
               inputRef.current.focus();
-              handleClearClick();
             }}
           >
             <CloseIcon />

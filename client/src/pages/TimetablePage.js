@@ -1,18 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Box, makeStyles } from '@material-ui/core';
 
-import { Axios } from '../lib/axios';
-import JWT from 'jsonwebtoken';
+import {
+  USER_ACTIONS,
+  SEARCH_ACTIONS,
+  SNACKBAR_ACTIONS,
+  MODAL_ACTIONS,
+} from '../commons/constants';
 
-import { makeStyles } from '@material-ui/core/styles';
-import { Snackbar } from '@material-ui/core';
-import MuiAlert from '@material-ui/lab/Alert';
+import { BookmarkedLecture, TimetableLecture, Lecture, Timetable, User } from '../models';
+import { Header, Modal, SearchSection, Snackbar, TimetableSection } from '../components';
+import { useUser, useSearch, useSnackbar, useModal } from '../hooks';
 
-import { Lecture, Timetable, User } from '../models';
-import { Header, Modal, SearchSection, TimetableSection } from '../components';
-
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
+import { copyToClipboard, isIn, isPeriodDup } from '../utils/helper';
+import { getShareLink } from '../utils/share';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -40,394 +41,227 @@ const useStyles = makeStyles((theme) => ({
 export default function TimetablePage({ collegeName, logout }) {
   const classes = useStyles();
 
-  const [user, setUser] = useState();
-  const [search, setSearch] = useState('');
-  const [pagination, setPagination] = useState({
-    current: 0,
-    total: 0,
-  });
-  const [searchResults, setSearchResults] = useState([]);
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [bookmarks, setBookmarks] = useState([]);
-  const [{ selectedTimetableIndex, timetables }, setTimetableTab] = useState({
-    selectedTimetableIndex: -1,
-    timetables: [],
-  });
+  const [{ timetables, bookmarks }, userDispatch] = useUser();
+  const [searchState, searchDispatch] = useSearch(bookmarks);
   const [timetableLectures, setTimetableLectures] = useState([]);
-  const [selectedSearchTabIndex, setSelectedSearchTabIndex] = useState(0);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [modalInfo, setModalInfo] = useState({ openModal: false });
+
+  const [snackbarState, snackbarDispatch, closeSnackBar] = useSnackbar();
+  const [modalState, modalDispatch, closeModal] = useModal();
+
+  const [searchTabIndex, setSearchTabIndex] = useState(0);
+  const [timetableTabIndex, setTimetableTabIndex] = useState(0);
+
   const [hideSearchTab, setHideSearchTab] = useState(false);
 
   useEffect(() => {
-    Axios()
-      .get(`/user`)
-      .then(({ data }) => {
-        setUser(new User(data));
-        setBookmarks(
-          data.lectures.map((lecture) => ({ ...new Lecture(lecture), isBookmarked: true })),
-        );
-        setTimetableTab({
-          selectedTimetableIndex: data.timetables.length === 0 ? -1 : 0,
-          timetables: data.timetables,
-        });
-        setTimetableLectures(
-          data.timetables[0]
-            ? data.timetables[0].lectures.map((lecture) => ({
-                ...new Lecture(lecture),
-                isAdded: true,
-              }))
-            : [],
-        );
-      });
-  }, []);
-
-  useEffect(() => {
-    if (search.length !== 0) getSearchResults(search, 1);
-  }, [search]);
-
-  useEffect(() => {
-    setSearchResults((lectures) =>
-      lectures.map((lecture) => ({
-        ...lecture,
-        isBookmarked: bookmarks.find((bookmark) => bookmark.id === lecture.id) !== undefined,
-      })),
-    );
-  }, [bookmarks]);
-
-  useEffect(() => {
-    if (user) getTimetable();
-  }, [selectedTimetableIndex]);
+    setTimetableLectures(timetables[timetableTabIndex]?.lectures ?? []);
+  }, [timetableTabIndex, timetables]);
 
   const getSearchResults = (search, page) => {
-    setSearchLoading(true);
-    Axios()
-      .get(`/search?search=${search}${page ? `&page=${page}` : ''} `)
-      .then(({ data: { lectures, pages } }) => {
-        setSelectedSearchTabIndex(0);
-        setSearchResults(
-          lectures.map((lecture) => ({
-            ...new Lecture(lecture),
-            isBookmarked: bookmarks.find((bookmark) => bookmark.id === lecture.id),
-          })),
-        );
-        setPagination({
-          current: pages === 0 ? 0 : page,
-          total: pages,
-        });
-
-        setSearchLoading(false);
+    searchDispatch({ type: SEARCH_ACTIONS.START_SEARCH });
+    Lecture.getSearchResults(search, page).then(({ data: { lectures, pages } }) => {
+      setSearchTabIndex(0);
+      searchDispatch({
+        type: SEARCH_ACTIONS.FINISH_SEARCH,
+        payload: { search, lectures, page, pages, bookmarks },
       });
-  };
-
-  const getTimetable = () => {
-    if (selectedTimetableIndex === -1) {
-      return setTimetableLectures([]);
-    }
-    Axios()
-      .get(`/timetable/${timetables[selectedTimetableIndex].id}`)
-      .then(({ data: timetable }) => {
-        setTimetableLectures(
-          timetable.lectures.map((lecture) => ({
-            ...new Lecture(lecture),
-            isAdded: true,
-          })),
-        );
-      });
-  };
-
-  const handleSnackBarClose = (event, reason) => {
-    if (reason === 'clickaway') return;
-    setErrorMessage('');
-  };
-
-  const handleSelectedTimetableIndexChange = (event, index) => {
-    setTimetableTab((timetableTab) => ({ ...timetableTab, selectedTimetableIndex: index }));
-  };
-
-  const handleSelectedSearchTabIndex = (event, index) => {
-    setSelectedSearchTabIndex(index);
-  };
-
-  const handleSearchSubmit = (search) => {
-    setSearch(search);
-  };
-
-  const handleClearClick = () => {
-    setSearch('');
-    setSearchResults([]);
-  };
-
-  const handleBookmarkClick = (lecture) => {
-    Axios()
-      .post(`/user/bookmark/${lecture.id}`)
-      .then((res) => {
-        setBookmarks([...bookmarks, { ...lecture, isBookmarked: true }]);
-      });
-  };
-
-  const handleUnbookmarkClick = (lecture) => {
-    Axios()
-      .delete(`/user/bookmark/${lecture.id}`)
-      .then((res) => {
-        setBookmarks([...bookmarks.filter((bookmark) => bookmark.id !== lecture.id)]);
-      });
-  };
-
-  const handleAddClick = (lecture) => {
-    if (selectedTimetableIndex === -1) {
-      return setErrorMessage('현재 시간표가 없습니다!');
-    }
-
-    const isLectureDup = timetableLectures.findIndex(({ id }) => id === lecture.id) !== -1;
-
-    if (isLectureDup) {
-      return setErrorMessage('이미 시간표에 추가된 과목입니다!');
-    }
-
-    const isNameDup = timetableLectures.findIndex(({ name }) => name === lecture.name) !== -1;
-
-    if (isNameDup) {
-      return setErrorMessage('분반이 다른 같은 과목이 존재합니다!');
-    }
-
-    const isPeriodDup = timetableLectures.reduce(
-      (isDup, { period: periods }) =>
-        isDup ||
-        lecture.period
-          .split(',')
-          .reduce((isDup, period) => isDup || periods.includes(period), false),
-      false,
-    );
-
-    if (isPeriodDup) {
-      return setErrorMessage('해당 시간에 다른 과목이 존재합니다!');
-    }
-
-    Axios()
-      .post(`/timetable/lecture/${timetables[selectedTimetableIndex].id}/${lecture.id}`)
-      .then((res) => {
-        setTimetableLectures((lectures) => [...lectures, { ...lecture, isAdded: true }]);
-      });
-  };
-
-  const handleDeleteClick = (lecture) => {
-    Axios()
-      .delete(`/timetable/lecture/${timetables[selectedTimetableIndex].id}/${lecture.id}`)
-      .then((res) => {
-        setTimetableLectures([
-          ...timetableLectures.filter((timetableLecture) => timetableLecture.id !== lecture.id),
-        ]);
-        handleModalClose();
-      });
-  };
-
-  const handleModalClose = () => {
-    setModalInfo({ openModal: false });
-  };
-
-  const openTimetableCreateModal = () => {
-    setModalInfo({
-      openModal: true,
-      handleModalInputSubmit: handleTimetableCreate,
-      handleModalClose,
-      titleText: '시간표 생성',
-      placeholderText: '시간표 이름',
-      buttonText: '생성',
     });
   };
 
-  const openFeedbackReportModal = () => {
-    setModalInfo({
-      openModal: true,
-      handleModalInputSubmit: handleFeedbackReport,
-      handleModalClose,
-      titleText: '버그나 피드백을 남겨주세요!',
-      placeholderText: '버그, 피드백',
-      buttonText: '제출',
-    });
-  };
-
-  const openTimetableEditModal = () => {
-    if (selectedTimetableIndex === -1) {
-      return setErrorMessage('수정할 시간표가 없습니다!');
-    }
-    setModalInfo({
-      openModal: true,
-      handleModalInputSubmit: handleTimetableEdit,
-      handleModalClose,
-      titleText: '시간표 이름 변경',
-      placeholderText: '시간표 이름',
-      buttonText: '변경',
-    });
-  };
-
-  const openTimetableShareModal = () => {
-    if (selectedTimetableIndex === -1) {
-      return setErrorMessage('공유할 시간표가 없습니다!');
-    }
-    setModalInfo({
-      openModal: true,
-      handleModalInputSubmit: handleTimetableShare,
-      handleModalClose,
-      titleText: '공유 링크를 복사하시겠습니까?',
-      buttonText: '복사',
-    });
-  };
-
-  const openLectureDeleteModal = (lecture) => {
-    setModalInfo({
-      openModal: true,
-      handleModalInputSubmit: () => handleDeleteClick(lecture),
-      handleModalClose,
-      titleText: `'${lecture.name}'을(를) 삭제하시겠습니까?`,
-      buttonText: '확인',
-    });
-  };
-
-  const openTimetableDeleteModal = () => {
-    if (selectedTimetableIndex === -1) {
-      return setErrorMessage('삭제할 시간표가 없습니다!');
-    }
-    setModalInfo({
-      openModal: true,
-      handleModalInputSubmit: handleTimetableDelete,
-      handleModalClose,
-      titleText: `'${timetables[selectedTimetableIndex].title}'을(를) 삭제하시겠습니까?`,
-      buttonText: '확인',
-    });
-  };
-
-  const handleTimetableCreate = (title) => {
-    Axios()
-      .post(`/timetable`, { title })
-      .then((res) => {
-        setTimetableTab(({ timetables }) => ({
-          selectedTimetableIndex: timetables.length,
-          timetables: [...timetables, new Timetable(res.data)],
-        }));
-        handleModalClose();
+  const handleBookmarkLectureClick = (lecture) => {
+    User.bookmarkLecture(lecture.id).then((res) => {
+      userDispatch({
+        type: USER_ACTIONS.BOOKMARK_LECTURE,
+        payload: { lecture: new BookmarkedLecture(lecture) },
       });
+    });
   };
 
-  const handleTimetableShare = () => {
-    const value = JWT.sign(timetables[selectedTimetableIndex].id, process.env.REACT_APP_JWT_SECRET);
-
-    const textarea = document.createElement('textarea');
-    textarea.textContent = `${process.env.REACT_APP_DOMAIN_URL}/share/${value}`;
-
-    document.body.appendChild(textarea);
-
-    const selection = document.getSelection();
-    const range = document.createRange();
-    range.selectNode(textarea);
-    selection.removeAllRanges();
-    selection.addRange(range);
-    document.execCommand('copy');
-    selection.removeAllRanges();
-
-    document.body.removeChild(textarea);
-
-    handleModalClose();
-  };
-
-  const handleTimetableEdit = (title) => {
-    const id = timetables[selectedTimetableIndex].id;
-
-    Axios()
-      .put(`/timetable`, { id, title })
-      .then((res) => {
-        setTimetableTab(({ timetables, selectedTimetableIndex }) => {
-          timetables[selectedTimetableIndex].title = title;
-          return {
-            selectedTimetableIndex,
-            timetables,
-          };
-        });
-
-        handleModalClose();
+  const handleUnbookmarkLectureClick = (lecture) => {
+    User.unbookmarkLecture(lecture.id).then((res) => {
+      userDispatch({
+        type: USER_ACTIONS.UNBOOKMARK_LECTURE,
+        payload: { lectureId: lecture.id },
       });
+    });
   };
 
-  const handleTimetableDelete = () => {
-    const toDeleteId = timetables[selectedTimetableIndex].id;
-    Axios()
-      .delete(`/timetable/${toDeleteId}`)
-      .then((res) => {
-        setTimetableTab(({ timetables, selectedTimetableIndex }) => {
-          return {
-            selectedTimetableIndex:
-              selectedTimetableIndex === timetables.length - 1
-                ? selectedTimetableIndex - 1
-                : selectedTimetableIndex,
-            timetables: [...timetables.filter((timetable) => timetable.id !== toDeleteId)],
-          };
-        });
+  const handleAddLectureClick = (lecture) => {
+    if (timetables.length === 0)
+      return snackbarDispatch({ type: SNACKBAR_ACTIONS.ALERT_NO_CURRENT_TIMETABLE });
 
-        handleModalClose();
+    if (isIn(lecture, timetableLectures, 'id'))
+      return snackbarDispatch({ type: SNACKBAR_ACTIONS.ALERT_LECTURE_EXACT_DUP });
+
+    if (isIn(lecture, timetableLectures, 'name'))
+      return snackbarDispatch({ type: SNACKBAR_ACTIONS.ALERT_LECTURE_NAME_DUP });
+
+    if (isPeriodDup(lecture, timetableLectures))
+      return snackbarDispatch({ type: SNACKBAR_ACTIONS.ALERT_PERIOD_DUP });
+
+    const timetableId = timetables[timetableTabIndex].id;
+
+    Timetable.addLecture(timetableId, lecture.id).then((res) => {
+      userDispatch({
+        type: USER_ACTIONS.ADD_LECTURE_TO_TIMETABLE,
+        payload: { timetableId, lecture: new TimetableLecture(lecture) },
       });
+    });
+  };
+
+  const handleDeleteLecture = (lectureId) => {
+    const timetableId = timetables[timetableTabIndex].id;
+    Timetable.deleteLecture(timetableId, lectureId).then((res) => {
+      userDispatch({
+        type: USER_ACTIONS.DELETE_LECTURE_FROM_TIMETABLE,
+        payload: { timetableId, lectureId },
+      });
+      closeModal();
+    });
+  };
+
+  const openCreateTimetableModal = () =>
+    modalDispatch({
+      type: MODAL_ACTIONS.OPEN_CREATE_TIMETABLE_MODAL,
+      payload: { onSubmit: handleCreateTimetable },
+    });
+
+  const openReportFeedbackModal = () =>
+    modalDispatch({
+      type: MODAL_ACTIONS.OPEN_FEEDBACK_MODAL,
+      payload: { onSubmit: handleFeedbackReport },
+    });
+
+  const openEditTimetableModal = () => {
+    if (timetables.length === 0)
+      return snackbarDispatch({ type: SNACKBAR_ACTIONS.ALERT_NO_EDITABLE_TIMETABLE });
+
+    modalDispatch({
+      type: MODAL_ACTIONS.OPEN_EDIT_TIMETABLE_MODAL,
+      payload: { onSubmit: handleEditTimetable },
+    });
+  };
+
+  const openShareTimetableModal = () => {
+    if (timetables.length === 0)
+      return snackbarDispatch({ type: SNACKBAR_ACTIONS.ALERT_NO_SHAREABLE_TIMETABLE });
+
+    modalDispatch({
+      type: MODAL_ACTIONS.OPEN_SHARE_TIMETABLE_MODAL,
+      payload: { onSubmit: handleShareTimetable },
+    });
+  };
+
+  const openDeleteLectureModal = (lecture) => {
+    modalDispatch({
+      type: MODAL_ACTIONS.OPEN_DELETE_LECTURE_MODAL,
+      payload: {
+        onSubmit: () => handleDeleteLecture(lecture.id),
+        lectureName: lecture.name,
+      },
+    });
+  };
+
+  const openDeleteTimetableModal = () => {
+    if (timetables.length === 0)
+      return snackbarDispatch({ type: SNACKBAR_ACTIONS.ALERT_NO_DELETABLE_TIMETABLE });
+
+    modalDispatch({
+      type: MODAL_ACTIONS.OPEN_DELETE_TIMETABLE_MODAL,
+      payload: {
+        onSubmit: handleDeleteTimetable,
+        timetableTitle: timetables[timetableTabIndex].title,
+      },
+    });
+  };
+
+  const handleCreateTimetable = (title) => {
+    Timetable.create(title).then((res) => {
+      setTimetableTabIndex(timetables.length);
+      userDispatch({
+        type: USER_ACTIONS.CREATE_TIMETABLE,
+        payload: { timetable: new Timetable(res.data) },
+      });
+      closeModal();
+    });
+  };
+
+  const handleShareTimetable = () => {
+    const shareLink = getShareLink(timetables[timetableTabIndex].id);
+    copyToClipboard(shareLink);
+    modalDispatch({ type: MODAL_ACTIONS.CLOSE });
+    snackbarDispatch({ type: SNACKBAR_ACTIONS.ALERT_SHARE_LINK_COPIED });
+  };
+
+  const handleEditTimetable = (title) => {
+    const id = timetables[timetableTabIndex].id;
+    Timetable.updateTitle(id, title).then((res) => {
+      userDispatch({
+        type: USER_ACTIONS.UPDATE_TIMETABLE,
+        payload: {
+          timetable: { ...timetables[timetableTabIndex], title },
+        },
+      });
+      closeModal();
+    });
+  };
+
+  const handleDeleteTimetable = () => {
+    const timetableId = timetables[timetableTabIndex].id;
+    Timetable.delete(timetableId).then(() => {
+      setTimetableTabIndex(
+        timetableTabIndex !== 0 && timetableTabIndex === timetables.length - 1
+          ? timetableTabIndex - 1
+          : timetableTabIndex,
+      );
+      userDispatch({ type: USER_ACTIONS.DELETE_TIMETABLE, payload: { timetableId } });
+      closeModal();
+    });
   };
 
   const handleFeedbackReport = (feedback) => {
-    Axios()
-      .post(`/user/feedback`, { feedback })
-      .then(() => handleModalClose());
-  };
-
-  const toggleHideSearchTab = () => setHideSearchTab(!hideSearchTab);
-
-  const handlePageChange = (event, value) => {
-    getSearchResults(search, value);
+    User.reportFeedback(feedback).then(() => modalDispatch({ type: MODAL_ACTIONS.CLOSE }));
   };
 
   return (
-    <div className={classes.root}>
-      <Header {...{ collegeName, logout, openFeedbackReportModal }} />
-      <div className={classes.body}>
+    <Box className={classes.root}>
+      <Header {...{ collegeName, logout, openReportFeedbackModal }} />
+      <Box className={classes.body}>
         {!hideSearchTab && (
           <SearchSection
             {...{
-              lectures: [searchResults, bookmarks, timetableLectures],
-              pagination,
-              searchLoading,
-              selectedSearchTabIndex,
-              handleSelectedSearchTabIndex,
-              handleSearchSubmit,
-              handleClearClick,
-              handleAddClick,
-              handleDeleteClick: openLectureDeleteModal,
-              handleBookmarkClick,
-              handleUnbookmarkClick,
-              handlePageChange,
+              lectures: [searchState.searchResults, bookmarks, timetableLectures],
+              pagination: searchState.pagination,
+              searchLoading: searchState.searchLoading,
+              tabIndex: searchTabIndex,
+              setTabIndex: setSearchTabIndex,
+              handleSearchPageChange: (event, page) => getSearchResults(searchState.search, page),
+              handleSearchSubmit: (search) => getSearchResults(search, 1),
+              handleAddLectureClick,
+              handleBookmarkLectureClick,
+              handleUnbookmarkLectureClick,
+              handleDeleteLectureClick: openDeleteLectureModal,
             }}
           />
         )}
         <TimetableSection
           {...{
             timetables,
-            selectedIndex: selectedTimetableIndex,
+            tabIndex: timetableTabIndex,
+            setTabIndex: setTimetableTabIndex,
             lectures: timetableLectures,
             hideSearchTab,
-            toggleHideSearchTab,
-            handleSelectedTimetableIndexChange,
-            handleLectureDeleteClick: openLectureDeleteModal,
-            handleTimetableCreate: openTimetableCreateModal,
-            handleTimetableDelete: openTimetableDeleteModal,
-            handleTimetableEdit: openTimetableEditModal,
-            handleTimetableShare: openTimetableShareModal,
+            setHideSearchTab,
+            handleDeleteLectureClick: openDeleteLectureModal,
+            handleCreateTimetableClick: openCreateTimetableModal,
+            handleDeleteTimetableClick: openDeleteTimetableModal,
+            handleEditTimetableClick: openEditTimetableModal,
+            handleShareTimetableClick: openShareTimetableModal,
           }}
         />
-      </div>
-      <Snackbar
-        open={errorMessage.length !== 0}
-        autoHideDuration={2000}
-        onClose={handleSnackBarClose}
-      >
-        <Alert onClose={handleSnackBarClose} severity="error">
-          {errorMessage}
-        </Alert>
-      </Snackbar>
-      <Modal {...modalInfo} />
-    </div>
+      </Box>
+      <Snackbar {...{ ...snackbarState, onClose: closeSnackBar }} />
+      <Modal {...{ ...modalState, onClose: closeModal }} />
+    </Box>
   );
 }

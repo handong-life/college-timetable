@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Tabs, Tab, Box, Typography } from '@material-ui/core';
+import { Box, Typography, makeStyles } from '@material-ui/core';
 import Pagination from '@material-ui/lab/Pagination';
 
 import SearchBar from './SearchBar';
 import LectureCard from './LectureCard';
+import Tabs from '../Tabs';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -67,24 +67,21 @@ export default function SearchSection({
   lectures,
   pagination,
   searchLoading,
-  selectedSearchTabIndex,
-  handleSelectedSearchTabIndex,
+  tabIndex,
+  setTabIndex,
   handleSearchSubmit,
-  handleClearClick,
-  handleAddClick,
-  handleDeleteClick,
-  handleBookmarkClick,
-  handleUnbookmarkClick,
-  handlePageChange,
+  handleAddLectureClick,
+  handleDeleteLectureClick,
+  handleBookmarkLectureClick,
+  handleUnbookmarkLectureClick,
+  handleSearchPageChange,
 }) {
   const classes = useStyles();
   const searchListRef = useRef();
 
   useEffect(() => {
-    if (searchListRef?.current) {
-      searchListRef.current.scrollTo(0, 0);
-    }
-  }, [pagination, selectedSearchTabIndex]);
+    if (searchListRef?.current) searchListRef.current.scrollTo(0, 0);
+  }, [pagination, setTabIndex]);
 
   const notFoundMessages = [
     [
@@ -99,40 +96,29 @@ export default function SearchSection({
     ['현재 시간표에 추가된 과목이 없습니다.'],
   ];
 
-  const a11yProps = (index) => {
-    return {
-      id: `search-tab-${index}`,
-      'aria-controls': `search-tabpanel-${index}`,
-    };
-  };
-
   return (
     <Box className={classes.root}>
       <Box className={classes.searchBarWrapper}>
-        <SearchBar {...{ handleSearchSubmit, handleClearClick }} />
+        <SearchBar {...{ handleSearchSubmit }} />
       </Box>
       <Tabs
         className={classes.searchTabs}
         indicatorColor="secondary"
-        value={selectedSearchTabIndex}
-        onChange={handleSelectedSearchTabIndex}
-        aria-label="Search Tabs"
-      >
-        <Tab label={<Typography variant="body2">강의 검색</Typography>} {...a11yProps(0)} />
-        <Tab label={<Typography variant="body2">즐겨 찾기</Typography>} {...a11yProps(1)} />
-        <Tab label={<Typography variant="body2">현재 시간표</Typography>} {...a11yProps(2)} />
-      </Tabs>
+        value={tabIndex}
+        onChange={(e, index) => setTabIndex(index)}
+        tabs={['강의 검색', '즐겨 찾기', '현재 시간표']}
+      />
       <Box className={classes.searchTab}>
-        {lectures[selectedSearchTabIndex].length !== 0 ? (
+        {lectures[tabIndex].length !== 0 ? (
           <Box className={classes.lectureList} ref={searchListRef}>
-            {lectures[selectedSearchTabIndex].map((lecture) => (
+            {lectures[tabIndex].map((lecture) => (
               <LectureCard
                 key={lecture.id}
                 lecture={lecture}
-                onAddClick={() => handleAddClick(lecture)}
-                onDeleteClick={() => handleDeleteClick(lecture)}
-                onBookmarkClick={() => handleBookmarkClick(lecture)}
-                onUnbookmarkClick={() => handleUnbookmarkClick(lecture)}
+                onAddClick={() => handleAddLectureClick(lecture)}
+                onDeleteClick={() => handleDeleteLectureClick(lecture)}
+                onBookmarkClick={() => handleBookmarkLectureClick(lecture)}
+                onUnbookmarkClick={() => handleUnbookmarkLectureClick(lecture)}
               />
             ))}
           </Box>
@@ -141,7 +127,7 @@ export default function SearchSection({
             {searchLoading ? (
               <Typography variant={'body1'}> 검색 결과 로딩 중!</Typography>
             ) : (
-              notFoundMessages[selectedSearchTabIndex].map((message, index) => (
+              notFoundMessages[tabIndex].map((message, index) => (
                 <Typography variant={'body1'} key={index}>
                   {message}
                 </Typography>
@@ -150,12 +136,12 @@ export default function SearchSection({
           </Box>
         )}
       </Box>
-      {selectedSearchTabIndex === 0 && (
+      {tabIndex === 0 && (
         <Box className={classes.pagination}>
           <Pagination
             page={pagination.current}
             count={pagination.total}
-            onChange={handlePageChange}
+            onChange={handleSearchPageChange}
           />
         </Box>
       )}

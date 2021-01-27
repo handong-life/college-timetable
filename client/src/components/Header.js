@@ -1,11 +1,11 @@
 import React from 'react';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import { AppBar, Box, IconButton, Typography, Tooltip } from '@material-ui/core';
+import { AppBar, Box, IconButton, Typography, Tooltip, makeStyles } from '@material-ui/core';
+
 import GitHubIcon from '@material-ui/icons/GitHub';
 import FeedbackIcon from '@material-ui/icons/Feedback';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
-const useTopBarStyle = makeStyles((theme) => ({
+const useStyles = makeStyles((theme) => ({
   appBar: {
     display: 'flex',
     flexDirection: 'row',
@@ -54,8 +54,8 @@ const useTopBarStyle = makeStyles((theme) => ({
   },
 }));
 
-export default function Header({ collegeName, logout, openFeedbackReportModal, isSharePage }) {
-  const classes = useTopBarStyle();
+export default function Header({ collegeName, logout, openReportFeedbackModal, isSharePage }) {
+  const classes = useStyles();
 
   return (
     <AppBar className={classes.appBar} position={'relative'} color={'default'}>
@@ -66,7 +66,7 @@ export default function Header({ collegeName, logout, openFeedbackReportModal, i
           {process.env.REACT_APP_HANDONG_ALERT_MESSAGE}
         </Typography>
       </Box>
-      {isSharePage ? (
+      {!isSharePage ? (
         <>
           <Tooltip className={classes.gitHubIcon} title="깃헙 링크" arrow>
             <IconButton href="https://github.com/zoomKoding/college-timetable">
@@ -74,7 +74,7 @@ export default function Header({ collegeName, logout, openFeedbackReportModal, i
             </IconButton>
           </Tooltip>
           <Tooltip title="피드백 남기기" arrow>
-            <IconButton onClick={openFeedbackReportModal}>
+            <IconButton onClick={openReportFeedbackModal}>
               <FeedbackIcon />
             </IconButton>
           </Tooltip>

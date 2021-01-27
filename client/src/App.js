@@ -1,32 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
-import { useCookies } from 'react-cookie';
-
 import { ThemeProvider } from '@material-ui/core/styles';
+
 import { HomePage, TimetablePage, SharePage, NotFoundPage } from './pages';
 import theme from './theme';
-import { Axios } from './lib/axios';
-import { storage } from './utils/storage';
+import { useAuth } from './hooks';
 
 export default function App() {
-  const [cookies, setCookies, removeCookies] = useCookies('user');
-  const [authenticated, setAuthenticated] = useState(false);
-
-  const logout = () => {
-    storage.remove('accessToken');
-    setAuthenticated(false);
-  };
-
-  useEffect(() => {
-    if (cookies.accessToken) {
-      storage.set('accessToken', cookies.accessToken);
-      removeCookies('accessToken');
-    }
-
-    Axios()
-      .get('/auth')
-      .then((res) => setAuthenticated(res.data.authenticated));
-  }, []);
+  const [authenticated, logout] = useAuth();
 
   return (
     <div className="App">

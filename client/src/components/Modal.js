@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Modal, Paper, Box, Typography, InputBase, Button } from '@material-ui/core';
+import { Modal, Paper, Box, Typography, InputBase, Button, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -55,51 +54,39 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function MyModal({
-  openModal,
-  titleText,
-  placeholderText,
-  buttonText,
-  handleModalInputSubmit,
-  handleModalClose,
-}) {
+export default function MyModal({ open, isInputRequired, onSubmit, text, onClose }) {
   const classes = useStyles();
+
   const inputRef = useRef();
-  const [inputText, setInputText] = useState('');
+  const [inputValue, setInputValue] = useState('');
 
   useEffect(() => {
-    setInputText('');
-  }, [openModal]);
+    setInputValue('');
+  }, [open]);
 
   return (
-    <Modal
-      className={classes.root}
-      open={openModal}
-      onClose={handleModalClose}
-      aria-labelledby="modal-title"
-      aria-describedby="modal-description"
-    >
+    <Modal className={classes.root} open={open} onClose={onClose}>
       <Paper className={classes.modal}>
         <Typography className={classes.titleText} variant="h3">
-          {titleText}
+          {text.title}
         </Typography>
-        {placeholderText && (
+        {isInputRequired && (
           <form
             className={classes.inputBox}
             onSubmit={(e) => {
               e.preventDefault();
-              handleModalInputSubmit(inputText);
+              onSubmit(inputValue);
             }}
           >
             <InputBase
               ref={inputRef}
               autoFocus
               className={classes.input}
-              value={inputText}
+              value={inputValue}
               autoComplete="off"
               name="modalInput"
-              onChange={(e) => setInputText(e.target.value)}
-              placeholder={placeholderText}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder={text.placeholder}
             />
           </form>
         )}
@@ -107,10 +94,10 @@ export default function MyModal({
           <Button
             variant="contained"
             color="secondary"
-            disabled={placeholderText && inputText.length === 0}
-            onClick={() => handleModalInputSubmit(inputText)}
+            disabled={isInputRequired && inputValue.length === 0}
+            onClick={() => onSubmit(inputValue)}
           >
-            <Typography variant="body2">{buttonText}</Typography>
+            <Typography variant="body2">{text.button}</Typography>
           </Button>
         </Box>
       </Paper>

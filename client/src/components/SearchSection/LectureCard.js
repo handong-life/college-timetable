@@ -1,6 +1,5 @@
 import React from 'react';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import { Box, IconButton, Tooltip, Typography } from '@material-ui/core';
+import { Box, IconButton, Tooltip, Typography, makeStyles } from '@material-ui/core';
 
 import BookmarkIcon from '@material-ui/icons/Bookmark';
 import AddIcon from '@material-ui/icons/Add';

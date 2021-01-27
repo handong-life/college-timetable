@@ -1,5 +1,8 @@
+import { Axios } from '../lib/axios';
+import { isIn } from '../utils/helper';
+
 export default class Lecture {
-  constructor(raw) {
+  constructor(raw, bookmarks = []) {
     this.id = raw.id;
     this.gubun = raw.gubun;
     this.code = raw.code;
@@ -16,7 +19,22 @@ export default class Lecture {
     this.grading = raw.grading;
     this.pfPossible = raw.pfPossible;
     this.crawledAt = raw.crawledAt;
-    this.isBookmarked = true;
+    this.isBookmarked = isIn(raw, bookmarks, 'id');
     this.isAdded = false;
+  }
+
+  static getSearchResults = async (search, page) =>
+    await Axios().get(`/search?search=${search}${page ? `&page=${page}` : ''}`);
+}
+
+export class BookmarkedLecture extends Lecture {
+  constructor(raw) {
+    return { ...super(raw), isBookmarked: true };
+  }
+}
+
+export class TimetableLecture extends Lecture {
+  constructor(raw) {
+    return { ...super(raw), isAdded: true };
   }
 }

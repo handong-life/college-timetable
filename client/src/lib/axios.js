@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { storage } from '../utils/storage';
-import { STORAGE_KEY, SERVERURL } from '../commons/constants';
+import { STORAGE_KEY } from '../commons/constants';
 
 const axiosContainer = {
   key: null,
@@ -12,7 +12,7 @@ export const Axios = () => {
   if (axiosContainer.instance === null || accessToken !== axiosContainer.key) {
     axiosContainer.key = accessToken;
     axiosContainer.instance = axios.create({
-      baseURL: `${SERVERURL}/api`,
+      baseURL: `${process.env.REACT_APP_SERVER_URL}/api`,
       headers: {
         'content-type': 'application/json',
         ...(accessToken && { authorization: `Bearer ${accessToken}` }),
