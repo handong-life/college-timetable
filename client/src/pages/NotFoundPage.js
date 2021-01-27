@@ -1,6 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Container, Typography, Link } from '@material-ui/core';
+import { Container, Typography, Link, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -14,8 +13,10 @@ const useStyles = makeStyles((theme) => ({
     textDecoration: 'underline',
   },
 }));
+
 export default function Page404() {
   const classes = useStyles();
+
   return (
     <Container className={classes.container} maxWidth={'md'}>
       <Typography variant={'h1'} color={'primary'} gutterBottom>
