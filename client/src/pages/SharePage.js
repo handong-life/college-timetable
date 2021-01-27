@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Axios } from '../lib/axios';
-import { makeStyles } from '@material-ui/core/styles';
-import { Box } from '@material-ui/core';
+import { Box, makeStyles } from '@material-ui/core';
 
+import { Timetable } from '../models';
 import { Header, TimetableSection } from '../components';
 import { NotFoundPage } from '.';
 
@@ -30,24 +29,25 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
+
 export default function SharePage({ match }) {
+  const classes = useStyles();
+
   const [timetable, setTimetable] = useState({});
   const [notFound, setNotFound] = useState(false);
-  useEffect(() => {
-    Axios()
-      .get(`/share/${match.params.id}`)
-      .then(
-        (res) => setTimetable(res.data),
-        () => setNotFound(true),
-      );
-  }, []);
 
-  const classes = useStyles();
+  useEffect(() => {
+    Timetable.getBySharedId(match.params.id).then(
+      (res) => setTimetable(new Timetable(res.data)),
+      (err) => setNotFound(true),
+    );
+  }, [match.params.id]);
+
   return notFound ? (
     <NotFoundPage />
   ) : (
     <Box className={classes.root}>
-      <Header {...{ collegeName: '한동대' }} />
+      <Header collegeName="한동대" isSharePage />
       <Box className={classes.body}>
         <TimetableSection
           selectedIndex={0}
