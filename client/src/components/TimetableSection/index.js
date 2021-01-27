@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import { Box, IconButton, ButtonGroup, Tabs, Tab, Typography, Tooltip } from '@material-ui/core';
+import { Box, Typography, makeStyles } from '@material-ui/core';
 
-import AddIcon from '@material-ui/icons/Add';
-import CreateIcon from '@material-ui/icons/Create';
-import DeleteIcon from '@material-ui/icons/Delete';
-import ShareIcon from '@material-ui/icons/Share';
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
+
+import Tabs from '../Tabs';
+import TimetableButtonGroup from './TimetableButtonGroup';
 import LectureGrid from './LectureGrid';
 import { sum } from '../../utils/helper';
+import { TIMETABLE_DAYS, MAX_PERIOD } from '../../commons/constants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,18 +27,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     minHeight: 'fit-content',
-  },
-
-  tabs: {
-    height: '100%',
-  },
-
-  buttonGroup: {
-    alignSelf: 'flex-end',
-    height: 40,
-    borderRadius: '23px',
-    backgroundColor: 'white',
-    marginBottom: '5px',
   },
 
   timetableHeader: {
@@ -114,6 +101,7 @@ const useStyles = makeStyles((theme) => ({
   hideButton: {
     marginLeft: 2,
     display: 'none',
+    color: 'rgba(0, 0, 0, 0.54)',
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
     },
@@ -134,27 +122,29 @@ const getLecturesForTimetable = (lectures = []) => {
   return lecturesForTimetable;
 };
 
+const getPeriod = (index) =>
+  TIMETABLE_DAYS[index % TIMETABLE_DAYS.length] + parseInt(index / TIMETABLE_DAYS.length + 1);
+
 export default function TimetableSection({
   timetables,
   lectures,
-  selectedIndex,
+  tabIndex,
+  setTabIndex,
   hideSearchTab,
-  toggleHideSearchTab,
-  handleLectureDeleteClick,
-  handleSelectedTimetableIndexChange,
-  handleTimetableCreate,
-  handleTimetableDelete,
-  handleTimetableEdit,
-  handleTimetableShare,
+  setHideSearchTab,
+  handleDeleteLectureClick,
+  handleCreateTimetableClick,
+  handleDeleteTimetableClick,
+  handleEditTimetableClick,
+  handleShareTimetableClick,
   isSharePage,
 }) {
-  const TIMETABLE_DAYS = ['', '월', '화', '수', '목', '금'];
-  const MAX_PERIOD = 9;
   const classes = useStyles({ hideSearchTab });
+
   const lecturesForTimetable = getLecturesForTimetable(lectures);
   const [hoveredIndex, setHoveredIndex] = useState(-1);
 
-  const PeriodIndicator = (index) => {
+  const PeriodIndicator = ({ index }) => {
     return (
       <Box className={classes.periodIndicator} key={index}>
         <Typography variant="body2">{parseInt(index / TIMETABLE_DAYS.length + 1)}</Typography>
@@ -162,13 +152,19 @@ export default function TimetableSection({
     );
   };
 
-  const DayIndicator = (indicator) => {
+  const DayIndicator = ({ indicator }) => {
     return (
       <Box className={classes.dayIndicator} key={indicator}>
         <Typography variant="body2">{indicator}</Typography>
       </Box>
     );
   };
+
+  const CreditIndicator = () => (
+    <Box className={classes.creditSum}>
+      <Typography variant="body1">총 {sum(lectures, 'credit')}학점</Typography>
+    </Box>
+  );
 
   return (
     <Box className={classes.root}>
@@ -177,61 +173,35 @@ export default function TimetableSection({
           <div className={classes.tabs}></div>
         ) : (
           <Tabs
-            className={classes.tabs}
-            value={selectedIndex}
-            onChange={handleSelectedTimetableIndexChange}
-            indicatorColor="secondary"
-            variant="scrollable"
-            scrollButtons="auto"
-          >
-            {timetables.map((timetable) => (
-              <Tab
-                label={<Typography variant="body2">{timetable.title}</Typography>}
-                key={timetable.id}
-              />
-            ))}
-          </Tabs>
+            value={tabIndex}
+            onChange={(e, index) => setTabIndex(index)}
+            tabs={timetables.map(({ title }) => title)}
+          />
         )}
         {!isSharePage ? (
-          <ButtonGroup size="small" className={classes.buttonGroup}>
-            <Tooltip title="시간표 생성" arrow>
-              <IconButton onClick={handleTimetableCreate}>
-                <AddIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="시간표 이름 수정" arrow>
-              <IconButton onClick={handleTimetableEdit}>
-                <CreateIcon />
-              </IconButton>
-            </Tooltip>
-
-            <Tooltip title="시간표 삭제" arrow>
-              <IconButton onClick={handleTimetableDelete}>
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="시간표 공유" arrow>
-              <IconButton onClick={handleTimetableShare}>
-                <ShareIcon />
-              </IconButton>
-            </Tooltip>
-          </ButtonGroup>
+          <TimetableButtonGroup
+            {...{
+              handleCreateTimetableClick,
+              handleDeleteTimetableClick,
+              handleEditTimetableClick,
+              handleShareTimetableClick,
+            }}
+          />
         ) : (
-          <Box className={classes.creditSum}>
-            <Typography variant="body1">총 {sum(lectures, 'credit')}학점</Typography>
-          </Box>
+          <CreditIndicator />
         )}
       </Box>
 
       <Box className={classes.timetableHeader}>
-        {TIMETABLE_DAYS.map((indicator) => DayIndicator(indicator))}
+        {TIMETABLE_DAYS.map((indicator) => (
+          <DayIndicator indicator={indicator} />
+        ))}
       </Box>
       <Box className={classes.timetableBody}>
         {Array.from(Array(TIMETABLE_DAYS.length * MAX_PERIOD)).map((value, index) => {
-          if (index % TIMETABLE_DAYS.length === 0) return PeriodIndicator(index);
-          const period =
-            TIMETABLE_DAYS[index % TIMETABLE_DAYS.length] +
-            parseInt(index / TIMETABLE_DAYS.length + 1);
+          if (index % TIMETABLE_DAYS.length === 0) return <PeriodIndicator index={index} />;
+
+          const period = getPeriod(index);
 
           return (
             <Box
@@ -241,7 +211,7 @@ export default function TimetableSection({
             >
               <LectureGrid
                 lecture={lecturesForTimetable[period]}
-                handleDeleteClick={isSharePage ? () => {} : handleLectureDeleteClick}
+                handleDeleteClick={isSharePage ? undefined : handleDeleteLectureClick}
                 key={index}
                 isHovered={hoveredIndex === lecturesForTimetable[period]?.id}
               />
@@ -251,20 +221,11 @@ export default function TimetableSection({
       </Box>
       {!isSharePage && (
         <Box className={classes.bottomBar}>
-          {hideSearchTab ? (
-            <FullscreenExitIcon
-              className={classes.hideButton}
-              onClick={toggleHideSearchTab}
-              style={{ color: 'rgba(0, 0, 0, 0.54)' }}
-            />
-          ) : (
-            <FullscreenIcon
-              className={classes.hideButton}
-              onClick={toggleHideSearchTab}
-              style={{ color: 'rgba(0, 0, 0, 0.54)' }}
-            />
-          )}
-          <Typography variant="body1">총 {sum(lectures, 'credit')}학점</Typography>
+          <Box className={classes.hideButton} onClick={() => setHideSearchTab((v) => !v)}>
+            {hideSearchTab ? <FullscreenExitIcon /> : <FullscreenIcon />}
+          </Box>
+
+          <CreditIndicator />
         </Box>
       )}
     </Box>
