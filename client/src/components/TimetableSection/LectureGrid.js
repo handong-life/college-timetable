@@ -1,7 +1,5 @@
 import React from 'react';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import { Box, Typography } from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
+import { Box, Typography, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -33,6 +31,7 @@ const useStyles = makeStyles((theme) => {
 
 export default function LectureGrid({ lecture, handleDeleteClick, isHovered }) {
   const classes = useStyles({ isHovered });
+
   return lecture ? (
     <Box
       className={classes.root}
