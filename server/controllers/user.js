@@ -2,6 +2,7 @@ const Feedback = require('../models/feedback');
 const Lecture = require('../models/lecture');
 const Timetable = require('../models/timetable');
 const User = require('../models/user');
+const UserLectureRelation = require('../models/user_lecture_relation');
 const UserLectureGleaningRelation = require('../models/user_lecture_gleaning_relation');
 
 exports.getUser = async (req, res) => {
