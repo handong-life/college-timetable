@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { USER_ACTIONS } from '../commons/constants';
-import { User } from '../models';
+import { BookmarkedLecture, User } from '../models';
 
 const initialUserState = {
   bookmarks: [],
@@ -17,6 +17,16 @@ function userReducer(user, { type, payload }) {
     case USER_ACTIONS.UNBOOKMARK_LECTURE: {
       const { lectureId } = payload;
       return { ...user, bookmarks: [...user.bookmarks.filter(({ id }) => id !== lectureId)] };
+    }
+
+    case USER_ACTIONS.ADD_SPIKE_LECTURE: {
+      const { lecture } = payload;
+      return { ...user, spikes: [...user.spikes, lecture] };
+    }
+
+    case USER_ACTIONS.DELETE_SPIKE_LECTURE: {
+      const { lectureId } = payload;
+      return { ...user, spikes: [...user.spikes.filter(({ id }) => id !== lectureId)] };
     }
 
     case USER_ACTIONS.ADD_LECTURE_TO_TIMETABLE: {
@@ -73,6 +83,13 @@ export default function useUser() {
   useEffect(() => {
     User.getUser().then(({ data }) => setState(new User(data)));
   }, []);
+
+  useEffect(() => {
+    const bookmarks = state.bookmarks.map(
+      (lecture) => new BookmarkedLecture(lecture, state.spikes),
+    );
+    setState({ ...state, bookmarks });
+  }, [state.spikes]);
 
   return [state, dispatch];
 }
