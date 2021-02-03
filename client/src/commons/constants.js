@@ -7,6 +7,13 @@ export const SNACKBAR_DURATION = 2000;
 export const TIMETABLE_DAYS = ['', '월', '화', '수', '목', '금'];
 export const MAX_PERIOD = 9;
 
+export const SEARCH_TABS = {
+  SEARCH: '강의 검색',
+  BOOKMARKS: '즐겨 찾기',
+  TIMETABLE: '현재 시간표',
+  SPIKES: '이삭 줍기',
+};
+
 export const USER_ACTIONS = {
   BOOKMARK_LECTURE: 'bookmarkLecture',
   UNBOOKMARK_LECTURE: 'unbookmarkLecture',
