@@ -51,6 +51,8 @@ export default function SpikeIntroductionModal({ open, onClose }) {
           🧩 이삭 줍기 서비스 소개
         </Typography>
         <Typography className={classes.bodyText} variant="body1">
+          여러분, 수강신청은 잘하셨나요?🤔
+          <br />
           원하시는 과목을 모두 잡으셨으면 좋겠지만,
           <br />
           아깝게 놓치신 분들도 계실 것 같습니다!
@@ -58,7 +60,8 @@ export default function SpikeIntroductionModal({ open, onClose }) {
           그런 분들을 위해 <strong>이삭줍기</strong>를 서비스하게 되었습니다!
           <br />
           <br />
-          <EcoOutlinedIcon style={{ fontSize: 30 }} />을 이용해서 이삭줍기에 과목을 담으시면 <br />
+          <strong>이삭줍기</strong>는 <EcoOutlinedIcon style={{ fontSize: 30 }} />
+          버튼을 이용해서 과목을 담으시면 <br />
           5~10분마다 주기적으로 수강 현황을 확인하여 <br />
           <strong>이삭(수강 공석) 발견 시 이메일로 알려드리려 합니다!</strong>
           <br />
