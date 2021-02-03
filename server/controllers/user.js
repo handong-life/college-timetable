@@ -2,7 +2,7 @@ const Feedback = require('../models/feedback');
 const Lecture = require('../models/lecture');
 const Timetable = require('../models/timetable');
 const User = require('../models/user');
-const UserLectureRelation = require('../models/user_lecture_relation');
+const UserLectureGleaningRelation = require('../models/user_lecture_gleaning_relation');
 
 exports.getUser = async (req, res) => {
   await User.update(
@@ -10,22 +10,14 @@ exports.getUser = async (req, res) => {
       viewCount: User.sequelize.literal('viewCount + 1'),
       lastLoggedInAt: new Date(),
     },
-    {
-      where: {
-        id: req.user.id,
-      },
-    },
+    { where: { id: req.user.id } },
   );
 
   const user = await User.findOne({
-    where: {
-      id: req.user.id,
-    },
+    where: { id: req.user.id },
     include: [
-      {
-        model: Lecture,
-        through: UserLectureRelation,
-      },
+      { as: 'bookmarks', model: Lecture },
+      { as: 'spikes', model: Lecture },
       { model: Timetable, include: Lecture },
     ],
   });
@@ -50,11 +42,27 @@ exports.unbookmarkLecture = async (req, res) => {
   res.send('complete');
 };
 
+exports.addSpikeLecture = async (req, res) => {
+  await UserLectureGleaningRelation.create({
+    userId: req.user.id,
+    lectureId: +req.params.lectureId,
+  });
+  res.send('complete');
+};
+
+exports.deleteSpikeLecture = async (req, res) => {
+  await UserLectureGleaningRelation.destroy({
+    where: {
+      userId: req.user.id,
+      lectureId: +req.params.lectureId,
+    },
+  });
+  res.send('complete');
+};
+
 exports.getBookmarks = async (req, res) => {
   const userBookmarks = await User.findOne({
-    where: {
-      id: req.user.id,
-    },
+    where: { id: req.user.id },
     include: {
       model: Lecture,
       through: UserLectureRelation,
