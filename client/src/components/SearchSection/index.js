@@ -5,6 +5,7 @@ import Pagination from '@material-ui/lab/Pagination';
 import SearchBar from './SearchBar';
 import LectureCard from './LectureCard';
 import Tabs from '../Tabs';
+import { SEARCH_TABS } from '../../commons/constants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -74,6 +75,8 @@ export default function SearchSection({
   handleDeleteLectureClick,
   handleBookmarkLectureClick,
   handleUnbookmarkLectureClick,
+  handleAddSpikeLectureClick,
+  handleDeleteSpikeLectureClick,
   handleSearchPageChange,
 }) {
   const classes = useStyles();
@@ -106,7 +109,7 @@ export default function SearchSection({
         indicatorColor="secondary"
         value={tabIndex}
         onChange={(e, index) => setTabIndex(index)}
-        tabs={['강의 검색', '즐겨 찾기', '현재 시간표']}
+        tabs={Object.values(SEARCH_TABS)}
       />
       <Box className={classes.searchTab}>
         {lectures[tabIndex].length !== 0 ? (
@@ -114,11 +117,14 @@ export default function SearchSection({
             {lectures[tabIndex].map((lecture) => (
               <LectureCard
                 key={lecture.id}
+                searchTab={Object.values(SEARCH_TABS)[tabIndex]}
                 lecture={lecture}
                 onAddClick={() => handleAddLectureClick(lecture)}
                 onDeleteClick={() => handleDeleteLectureClick(lecture)}
                 onBookmarkClick={() => handleBookmarkLectureClick(lecture)}
                 onUnbookmarkClick={() => handleUnbookmarkLectureClick(lecture)}
+                onAddSpikeClick={() => handleAddSpikeLectureClick(lecture)}
+                onDeleteSpikeClick={() => handleDeleteSpikeLectureClick(lecture)}
               />
             ))}
           </Box>

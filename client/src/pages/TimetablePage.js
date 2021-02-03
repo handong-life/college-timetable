@@ -6,14 +6,30 @@ import {
   SEARCH_ACTIONS,
   SNACKBAR_ACTIONS,
   MODAL_ACTIONS,
+  NOTIFICATION_POSTED_AT,
 } from '../commons/constants';
 
-import { BookmarkedLecture, TimetableLecture, Lecture, Timetable, User } from '../models';
-import { Header, Modal, SearchSection, Snackbar, TimetableSection } from '../components';
+import {
+  BookmarkedLecture,
+  TimetableLecture,
+  Lecture,
+  Timetable,
+  User,
+  SpikeLecture,
+} from '../models';
+import {
+  Header,
+  Modal,
+  SearchSection,
+  Snackbar,
+  SpikeIntroductionModal,
+  TimetableSection,
+} from '../components';
 import { useUser, useSearch, useSnackbar, useModal } from '../hooks';
 
 import { copyToClipboard, isIn, isPeriodDup } from '../utils/helper';
 import { getShareLink } from '../utils/share';
+import useNotifactionModal from '../hooks/useNotificationModal';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,12 +57,13 @@ const useStyles = makeStyles((theme) => ({
 export default function TimetablePage({ collegeName, logout }) {
   const classes = useStyles();
 
-  const [{ timetables, bookmarks }, userDispatch] = useUser();
-  const [searchState, searchDispatch] = useSearch(bookmarks);
+  const [{ timetables, bookmarks, spikes }, userDispatch] = useUser();
+  const [searchState, searchDispatch] = useSearch(bookmarks, spikes);
   const [timetableLectures, setTimetableLectures] = useState([]);
 
   const [snackbarState, snackbarDispatch, closeSnackBar] = useSnackbar();
   const [modalState, modalDispatch, closeModal] = useModal();
+  const [isNotiModalOpen, closeNotiModal] = useNotifactionModal(NOTIFICATION_POSTED_AT);
 
   const [searchTabIndex, setSearchTabIndex] = useState(0);
   const [timetableTabIndex, setTimetableTabIndex] = useState(0);
@@ -63,7 +80,25 @@ export default function TimetablePage({ collegeName, logout }) {
       setSearchTabIndex(0);
       searchDispatch({
         type: SEARCH_ACTIONS.FINISH_SEARCH,
-        payload: { search, lectures, page, pages, bookmarks },
+        payload: { search, lectures, page, pages, bookmarks, spikes },
+      });
+    });
+  };
+
+  const handleAddSpikeLectureClick = (lecture) => {
+    User.addSpikeLecture(lecture.id).then((res) => {
+      userDispatch({
+        type: USER_ACTIONS.ADD_SPIKE_LECTURE,
+        payload: { lecture: new SpikeLecture(lecture) },
+      });
+    });
+  };
+
+  const handleDeleteSpikeLectureClick = (lecture) => {
+    User.deleteSpikeLecture(lecture.id).then((res) => {
+      userDispatch({
+        type: USER_ACTIONS.DELETE_SPIKE_LECTURE,
+        payload: { lectureId: lecture.id },
       });
     });
   };
@@ -230,7 +265,7 @@ export default function TimetablePage({ collegeName, logout }) {
         {!hideSearchTab && (
           <SearchSection
             {...{
-              lectures: [searchState.searchResults, bookmarks, timetableLectures],
+              lectures: [searchState.searchResults, bookmarks, timetableLectures, spikes],
               pagination: searchState.pagination,
               searchLoading: searchState.searchLoading,
               tabIndex: searchTabIndex,
@@ -240,6 +275,8 @@ export default function TimetablePage({ collegeName, logout }) {
               handleAddLectureClick,
               handleBookmarkLectureClick,
               handleUnbookmarkLectureClick,
+              handleAddSpikeLectureClick,
+              handleDeleteSpikeLectureClick,
               handleDeleteLectureClick: openDeleteLectureModal,
             }}
           />
@@ -262,6 +299,7 @@ export default function TimetablePage({ collegeName, logout }) {
       </Box>
       <Snackbar {...{ ...snackbarState, onClose: closeSnackBar }} />
       <Modal {...{ ...modalState, onClose: closeModal }} />
+      <SpikeIntroductionModal {...{ open: isNotiModalOpen, onClose: closeNotiModal }} />
     </Box>
   );
 }

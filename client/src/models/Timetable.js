@@ -2,11 +2,11 @@ import { Axios } from '../lib/axios';
 import { TimetableLecture } from './Lecture';
 
 export default class Timetable {
-  constructor(raw, bookmarks) {
+  constructor(raw, bookmarks = [], spikes = []) {
     this.id = raw.id;
     this.title = raw.title;
     this.lectures = raw.lectures
-      ? raw.lectures.map((lecture) => new TimetableLecture(lecture, bookmarks))
+      ? raw.lectures.map((lecture) => new TimetableLecture(lecture, bookmarks, spikes))
       : [];
   }
 

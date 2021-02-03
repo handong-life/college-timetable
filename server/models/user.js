@@ -19,7 +19,8 @@ class User extends Model {
     );
   }
   static associate(models) {
-    this.belongsToMany(models.lecture, { through: 'userLectureRelation' });
+    this.belongsToMany(models.lecture, { through: 'userLectureRelation', as: 'bookmarks' });
+    this.belongsToMany(models.lecture, { through: 'userLectureGleaningRelation', as: 'spikes' });
     this.hasMany(models.timetable, {
       foreignKey: 'userId',
       targetKey: 'id',

@@ -2,7 +2,7 @@ import { Axios } from '../lib/axios';
 import { isIn } from '../utils/helper';
 
 export default class Lecture {
-  constructor(raw, bookmarks = []) {
+  constructor(raw, bookmarks = [], spikes = []) {
     this.id = raw.id;
     this.gubun = raw.gubun;
     this.code = raw.code;
@@ -20,6 +20,7 @@ export default class Lecture {
     this.pfPossible = raw.pfPossible;
     this.crawledAt = raw.crawledAt;
     this.isBookmarked = isIn(raw, bookmarks, 'id');
+    this.isSpike = isIn(raw, spikes, 'id');
     this.isAdded = false;
   }
 
@@ -28,13 +29,19 @@ export default class Lecture {
 }
 
 export class BookmarkedLecture extends Lecture {
-  constructor(raw) {
-    return { ...super(raw), isBookmarked: true };
+  constructor(raw, spikes) {
+    return { ...super(raw, [], spikes), isBookmarked: true };
   }
 }
 
 export class TimetableLecture extends Lecture {
   constructor(raw) {
     return { ...super(raw), isAdded: true };
+  }
+}
+
+export class SpikeLecture extends Lecture {
+  constructor(raw) {
+    return { ...super(raw), isSpike: true };
   }
 }

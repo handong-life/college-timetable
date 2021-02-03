@@ -19,10 +19,10 @@ function searchReducer(state, { type, payload }) {
     }
 
     case SEARCH_ACTIONS.FINISH_SEARCH: {
-      const { search, lectures, page, pages, bookmarks } = payload;
+      const { search, lectures, page, pages, bookmarks, spikes } = payload;
       return {
         search,
-        searchResults: lectures.map((lecture) => new Lecture(lecture, bookmarks)),
+        searchResults: lectures.map((lecture) => new Lecture(lecture, bookmarks, spikes)),
         searchLoading: false,
         pagination: {
           total: pages,
@@ -36,7 +36,7 @@ function searchReducer(state, { type, payload }) {
   }
 }
 
-export default function useSearch(bookmarks = []) {
+export default function useSearch(bookmarks = [], spikes = []) {
   const [state, setState] = useState(initialSearchState);
 
   function dispatch(action) {
@@ -45,9 +45,11 @@ export default function useSearch(bookmarks = []) {
   }
 
   useEffect(() => {
-    const searchResults = state.searchResults.map((lecture) => new Lecture(lecture, bookmarks));
+    const searchResults = state.searchResults.map(
+      (lecture) => new Lecture(lecture, bookmarks, spikes),
+    );
     setState({ ...state, searchResults });
-  }, [bookmarks]);
+  }, [bookmarks, spikes]);
 
   return [state, dispatch];
 }
