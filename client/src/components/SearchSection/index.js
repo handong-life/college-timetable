@@ -97,6 +97,7 @@ export default function SearchSection({
     ],
     ['즐겨찾기에 추가한 과목이 없습니다.'],
     ['현재 시간표에 추가된 과목이 없습니다.'],
+    ['이삭 줍기에 추가된 과목이 없습니다.'],
   ];
 
   return (
