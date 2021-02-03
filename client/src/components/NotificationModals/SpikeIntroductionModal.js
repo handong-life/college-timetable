@@ -59,34 +59,19 @@ export default function SpikeIntroductionModal({ open, onClose }) {
           <br />
           그런 분들을 위해 <strong>이삭줍기</strong>를 서비스하게 되었습니다!
           <br />
-          <br />
           <strong>이삭줍기</strong>는 <EcoOutlinedIcon style={{ fontSize: 30 }} />
-          버튼을 이용해서 과목을 담으시면 <br />
+          버튼을 이용해서 강의를 담으시면 <br />
           5~10분마다 주기적으로 수강 현황을 확인하여 <br />
-          <strong>이삭(수강 공석) 발견 시 이메일로 알려드리려 합니다!</strong>
-          <br />
-        </Typography>
-
-        <Typography className={classes.bodyText} variant="body1">
-          <br />
-          그리고 그동안
-          <br />
-          450분 정도가 대학시간을 이용해주셨는데요!
-          <br />
-          부족함이 많았음에도 많이 사용해주시고
-          <br />
-          적극적으로 피드백 주셨던 모든 분들 감사합니다!🙏
+          <strong>수강 공석 발견 시 이메일로 알려드리는 서비스입니다!</strong>
           <br />
           <br />
-          대학시간도 수강신청 끝나는 날까지
-          <br />
-          잘 서비스 될 수 있도록 노력하겠습니다!🤓
-          <br />
+          <strong>이삭 줍기</strong>로 원하는 과목을 꼭 잡으시길 바랍니다:)
           <br />
           <strong>그럼 남은 수강신청도 모두 화이팅하세요!🤗</strong>
           <br />
           <br />
         </Typography>
+
         <Box className={classes.buttonBox}>
           <Button variant="contained" color="secondary" onClick={onClose}>
             <Typography variant="body2">확인</Typography>
