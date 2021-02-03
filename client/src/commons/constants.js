@@ -17,6 +17,8 @@ export const SEARCH_TABS = {
 export const USER_ACTIONS = {
   BOOKMARK_LECTURE: 'bookmarkLecture',
   UNBOOKMARK_LECTURE: 'unbookmarkLecture',
+  ADD_SPIKE_LECTURE: 'addSpikeLecture',
+  DELETE_SPIKE_LECTURE: 'deleteSpikeLecture',
   ADD_LECTURE_TO_TIMETABLE: 'addLectureToTimetable',
   DELETE_LECTURE_FROM_TIMETABLE: 'deleteLectureFromTimetable',
   GET_TIMETABLE: 'getTimetable',
