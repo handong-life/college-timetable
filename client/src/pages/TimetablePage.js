@@ -257,7 +257,7 @@ export default function TimetablePage({ collegeName, logout }) {
   };
 
   const handleFeedbackReport = (feedback) => {
-    User.reportFeedback(feedback).then(() => modalDispatch({ type: MODAL_ACTIONS.CLOSE }));
+    User.reportFeedback(feedback).then(() => closeModal());
   };
 
   return (

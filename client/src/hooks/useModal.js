@@ -85,7 +85,6 @@ function searchReducer(state, { type, payload }) {
       const { onSubmit } = payload;
       return getOpenModalState({
         onSubmit,
-        isInputRequired: false,
         text: {
           title: '버그나 피드백을 남겨주세요!',
           placeholder: '버그, 피드백',
