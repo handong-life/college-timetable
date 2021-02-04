@@ -32,9 +32,8 @@ function searchReducer(state, { type }) {
     case SNACKBAR_ACTIONS.ALERT_SHARE_LINK_COPIED:
       return { open: true, message: '공유링크가 복사 되었습니다!', severity: 'info' };
 
-    case SNACKBAR_ACTIONS.CLOSE: {
-      return { ...state, ...initialSnackbarState };
-    }
+    case SNACKBAR_ACTIONS.ALERT_MAX_SPIKES:
+      return { open: true, message: '이삭 줍기는 최대 4개까지 가능합니다!' };
 
     default:
       return state;
