@@ -86,6 +86,8 @@ export default function TimetablePage({ collegeName, logout }) {
   };
 
   const handleAddSpikeLectureClick = (lecture) => {
+    if (spikes.length >= 4) return snackbarDispatch({ type: SNACKBAR_ACTIONS.ALERT_MAX_SPIKES });
+
     User.addSpikeLecture(lecture.id).then((res) => {
       userDispatch({
         type: USER_ACTIONS.ADD_SPIKE_LECTURE,

@@ -94,10 +94,6 @@ function searchReducer(state, { type, payload }) {
       });
     }
 
-    case MODAL_ACTIONS.CLOSE: {
-      return { ...initialModalState };
-    }
-
     default:
       return state;
   }

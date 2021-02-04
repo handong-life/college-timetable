@@ -45,6 +45,7 @@ export const SNACKBAR_ACTIONS = {
   ALERT_LECTURE_NAME_DUP: 'alertLectureNameDup',
   ALERT_PERIOD_DUP: 'alertPeriodDup',
   ALERT_SHARE_LINK_COPIED: 'alertShareLinkCopied',
+  ALERT_MAX_SPIKES: 'alertMaxSpikes',
 };
 
 export const MODAL_ACTIONS = {
