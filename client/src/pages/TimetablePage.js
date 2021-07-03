@@ -19,17 +19,18 @@ import {
 } from '../models';
 import {
   Header,
+  Footer,
   Modal,
   SearchSection,
   Snackbar,
-  SpikeIntroductionModal,
+  NewSemesterModal,
   TimetableSection,
 } from '../components';
 import { useUser, useSearch, useSnackbar, useModal } from '../hooks';
 
 import { copyToClipboard, isIn, isPeriodDup } from '../utils/helper';
 import { getShareLink } from '../utils/share';
-import useNotifactionModal from '../hooks/useNotificationModal';
+import useNotificationModal from '../hooks/useNotificationModal';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -63,7 +64,7 @@ export default function TimetablePage({ collegeName, logout }) {
 
   const [snackbarState, snackbarDispatch, closeSnackBar] = useSnackbar();
   const [modalState, modalDispatch, closeModal] = useModal();
-  const [isNotiModalOpen, closeNotiModal] = useNotifactionModal(NOTIFICATION_POSTED_AT);
+  const [isNotiModalOpen, closeNotiModal] = useNotificationModal(NOTIFICATION_POSTED_AT);
 
   const [searchTabIndex, setSearchTabIndex] = useState(0);
   const [timetableTabIndex, setTimetableTabIndex] = useState(0);
@@ -300,8 +301,9 @@ export default function TimetablePage({ collegeName, logout }) {
         />
       </Box>
       <Snackbar {...{ ...snackbarState, onClose: closeSnackBar }} />
+      <Footer />
       <Modal {...{ ...modalState, onClose: closeModal }} />
-      <SpikeIntroductionModal {...{ open: isNotiModalOpen, onClose: closeNotiModal }} />
+      <NewSemesterModal {...{ open: isNotiModalOpen, onClose: closeNotiModal }} />
     </Box>
   );
 }
