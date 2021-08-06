@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     width: 400,
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 3, 3),
+    padding: theme.spacing(4, 3, 3),
 
     [theme.breakpoints.down('sm')]: {
       width: 350,
@@ -48,10 +48,16 @@ export default function SpikeIntroductionModal({ open, onClose }) {
     <Modal className={classes.root} open={open} onClose={onClose}>
       <Paper className={classes.modal}>
         <Typography className={classes.titleText} variant="h3">
-          🧩 이삭 줍기 서비스 소개
+          <span role="img" aria-label="icon">
+            🧩
+          </span>{' '}
+          이삭 줍기 서비스 소개
         </Typography>
         <Typography className={classes.bodyText} variant="body1">
-          여러분, 수강신청은 잘하셨나요?🤔
+          여러분, 수강신청은 잘하셨나요?
+          <span role="img" aria-label="icon">
+            🤔
+          </span>
           <br />
           원하시는 과목을 모두 잡으셨으면 좋겠지만,
           <br />
@@ -67,7 +73,12 @@ export default function SpikeIntroductionModal({ open, onClose }) {
           <br />
           <strong>이삭 줍기</strong>로 원하는 과목을 꼭 잡으시길 바랍니다:)
           <br />
-          <strong>그럼 남은 수강신청도 모두 화이팅하세요!🤗</strong>
+          <strong>
+            그럼 남은 수강신청도 모두 화이팅하세요!
+            <span role="img" aria-label="icon">
+              🤗
+            </span>
+          </strong>
           <br />
           <br />
         </Typography>
