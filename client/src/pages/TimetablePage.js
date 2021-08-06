@@ -19,6 +19,7 @@ import {
 } from '../models';
 import {
   Header,
+  Footer,
   Modal,
   SearchSection,
   Snackbar,
@@ -300,6 +301,7 @@ export default function TimetablePage({ collegeName, logout }) {
         />
       </Box>
       <Snackbar {...{ ...snackbarState, onClose: closeSnackBar }} />
+      <Footer />
       <Modal {...{ ...modalState, onClose: closeModal }} />
       <SpikeIntroductionModal {...{ open: isNotiModalOpen, onClose: closeNotiModal }} />
     </Box>

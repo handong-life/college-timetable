@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react';
 import { STORAGE_KEY } from '../commons/constants';
 import { storage } from '../utils/storage';
 
-export default function useNotifactionModal(postedAt) {
+export default function useNotificationModal(postedAt) {
   const [open, setOpen] = useState(false);
-
   function closeModal() {
     storage.set(STORAGE_KEY.LAST_NOTIFICATION_SEEN_AT, new Date().toString());
     setOpen(false);

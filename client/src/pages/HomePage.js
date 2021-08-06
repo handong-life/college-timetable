@@ -1,10 +1,12 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Typography } from '@material-ui/core';
+import { Footer } from '../components';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
@@ -21,6 +23,11 @@ const useStyles = makeStyles((theme) => ({
     height: 50,
     width: '100%',
     marginBottom: 5,
+  },
+
+  footer: {
+    position: 'absolute',
+    bottom: 0,
   },
 
   title: {
@@ -85,6 +92,9 @@ export default function HomePage() {
         <Typography className={classes.warning}>
           {process.env.REACT_APP_HOME_ALERT_MESSAGE}
         </Typography>
+      </div>
+      <div className={classes.footer}>
+        <Footer />
       </div>
     </div>
   );
