@@ -45,10 +45,12 @@ export default function useSearch(bookmarks = [], spikes = []) {
   }
 
   useEffect(() => {
-    const searchResults = state.searchResults.map(
-      (lecture) => new Lecture(lecture, bookmarks, spikes),
-    );
-    setState({ ...state, searchResults });
+    setState((old) => {
+      const searchResults = old.searchResults.map(
+        (lecture) => new Lecture(lecture, bookmarks, spikes),
+      );
+      return { ...old, searchResults };
+    });
   }, [bookmarks, spikes]);
 
   return [state, dispatch];

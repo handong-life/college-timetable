@@ -18,7 +18,7 @@ export default function useAuth() {
       removeCookies('accessToken');
     }
     User.getAuth().then((res) => setState(res.data.authenticated));
-  }, []);
+  }, [cookies.accessToken, removeCookies]);
 
   return [state, logout];
 }

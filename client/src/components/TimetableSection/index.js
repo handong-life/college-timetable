@@ -146,7 +146,7 @@ export default function TimetableSection({
 
   const PeriodIndicator = ({ index }) => {
     return (
-      <Box className={classes.periodIndicator} key={index}>
+      <Box className={classes.periodIndicator}>
         <Typography variant="body2">{parseInt(index / TIMETABLE_DAYS.length + 1)}</Typography>
       </Box>
     );
@@ -154,7 +154,7 @@ export default function TimetableSection({
 
   const DayIndicator = ({ indicator }) => {
     return (
-      <Box className={classes.dayIndicator} key={indicator}>
+      <Box className={classes.dayIndicator}>
         <Typography variant="body2">{indicator}</Typography>
       </Box>
     );
@@ -193,13 +193,14 @@ export default function TimetableSection({
       </Box>
 
       <Box className={classes.timetableHeader}>
-        {TIMETABLE_DAYS.map((indicator) => (
-          <DayIndicator indicator={indicator} />
+        {TIMETABLE_DAYS.map((indicator, index) => (
+          <DayIndicator indicator={indicator} key={index} />
         ))}
       </Box>
       <Box className={classes.timetableBody}>
         {Array.from(Array(TIMETABLE_DAYS.length * MAX_PERIOD)).map((value, index) => {
-          if (index % TIMETABLE_DAYS.length === 0) return <PeriodIndicator index={index} />;
+          if (index % TIMETABLE_DAYS.length === 0)
+            return <PeriodIndicator index={index} key={index} />;
 
           const period = getPeriod(index);
 

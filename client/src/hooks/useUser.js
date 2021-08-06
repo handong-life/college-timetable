@@ -85,10 +85,12 @@ export default function useUser() {
   }, []);
 
   useEffect(() => {
-    const bookmarks = state.bookmarks.map(
-      (lecture) => new BookmarkedLecture(lecture, state.spikes),
-    );
-    setState({ ...state, bookmarks });
+    setState((old) => {
+      const bookmarks = old.bookmarks.map(
+        (lecture) => new BookmarkedLecture(lecture, state.spikes),
+      );
+      return { ...old, bookmarks };
+    });
   }, [state.spikes]);
 
   return [state, dispatch];
