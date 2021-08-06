@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { AppBar, Box, IconButton, Typography, Tooltip, makeStyles } from '@material-ui/core';
 
 import GitHubIcon from '@material-ui/icons/GitHub';
 import FeedbackIcon from '@material-ui/icons/Feedback';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { Lecture } from '../models';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -38,13 +39,12 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '20px',
   },
 
-  warning: {
+  information: {
     display: 'flex',
     alignItems: 'center',
     marginLeft: 15,
     fontWeight: 600,
     fontSize: 14,
-    color: 'red',
   },
 
   gitHubIcon: {
@@ -56,14 +56,22 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Header({ collegeName, logout, openReportFeedbackModal, isSharePage }) {
   const classes = useStyles();
+  const [lastCrawledAt, setLastCrawledAt] = useState();
+
+  useEffect(() => {
+    Lecture.getSearchResults('', 1).then(({ data }) => {
+      setLastCrawledAt(data?.lectures[0]?.crawledAt?.slice(5, 10));
+    });
+  }, []);
 
   return (
     <AppBar className={classes.appBar} position={'relative'} color={'default'}>
       <Box className={classes.front}>
         <img className={classes.icon} alt="대학 시간 로고" src="/timetable.png" />
         <Typography className={classes.title}>{collegeName}</Typography>
-        <Typography className={classes.warning}>
-          {process.env.REACT_APP_HANDONG_ALERT_MESSAGE}
+        <Typography className={classes.information}>
+          {process.env.REACT_APP_HANDONG_ALERT_MESSAGE ||
+            (lastCrawledAt ? `개설과목 업데이트: ${lastCrawledAt}` : '')}
         </Typography>
       </Box>
       {!isSharePage ? (
@@ -79,7 +87,7 @@ export default function Header({ collegeName, logout, openReportFeedbackModal, i
             </IconButton>
           </Tooltip>
           <Tooltip title="로그아웃" arrow>
-            <IconButton title="로그아웃" onClick={logout}>
+            <IconButton onClick={logout}>
               <ExitToAppIcon />
             </IconButton>
           </Tooltip>
