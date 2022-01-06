@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/core/styles';
 
-import { HomePage, TimetablePage, SharePage, NotFoundPage } from './pages';
+import { HomePage, SharePage, NotFoundPage, LoginPage } from './pages';
 import theme from './theme';
 import { useAuth } from './hooks';
 
@@ -16,25 +16,16 @@ export default function App() {
           <Switch>
             <Route
               exact
-              path="/"
-              render={() =>
-                authenticated ? (
-                  <Redirect to="/handong" />
-                ) : (
-                  <HomePage authenticated={authenticated} />
-                )
-              }
+              path="/login"
+              render={() => (authenticated ? <Redirect to="/" /> : <LoginPage />)}
             />
             <Route
               exact
-              path="/handong"
-              render={() =>
-                !authenticated ? (
-                  <Redirect to="/" />
-                ) : (
-                  <TimetablePage {...{ collegeName: '한동대', authenticated, logout }} />
-                )
-              }
+              path="/"
+              render={() => {
+                if (!authenticated) return <Redirect to="/login" />;
+                return <HomePage {...{ authenticated, logout }} />;
+              }}
             />
             <Route path="/share/:id" component={SharePage} />
             <Route component={NotFoundPage} />

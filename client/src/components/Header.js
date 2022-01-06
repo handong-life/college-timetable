@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Header({ collegeName, logout, openReportFeedbackModal, isSharePage }) {
+export default function Header({ logout, openReportFeedbackModal, isSharePage }) {
   const classes = useStyles();
   const [lastCrawledAt, setLastCrawledAt] = useState();
 
@@ -68,7 +68,7 @@ export default function Header({ collegeName, logout, openReportFeedbackModal, i
     <AppBar className={classes.appBar} position={'relative'} color={'default'}>
       <Box className={classes.front}>
         <img className={classes.icon} alt="대학 시간 로고" src="/timetable.png" />
-        <Typography className={classes.title}>{collegeName}</Typography>
+        <Typography className={classes.title}>한동대</Typography>
         <Typography className={classes.information}>
           {process.env.REACT_APP_HANDONG_ALERT_MESSAGE ||
             (lastCrawledAt ? `개설과목 업데이트: ${lastCrawledAt}` : '')}
