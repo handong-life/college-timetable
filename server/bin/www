@@ -1,37 +1,64 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
 const app = require('../app');
 const debug = require('debug')('college-time-table:server');
-const https = require('https');
 const http = require('http');
-const fs = require('fs');
-const hostname = 'www.timetable.college';
-const httpsPort = 8443;
-const httpPort = 8080;
 
-const httpsOptions = {
-  cert: fs.readFileSync('ssl/college_timetable.crt'),
-  ca: fs.readFileSync('ssl/college_timetable.crt'),
-  key: fs.readFileSync('ssl/college_timetable.key'),
-};
+/**
+ * Get port from environment and store in Express.
+ */
 
-const httpServer = http.createServer((req, res) => {
-  res.statusCode = 301;
-  res.setHeader('Location', `https://${hostname}${req.url}`);
-  res.end(); // make sure to call send() or end() to send the response
-});
+const port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
 
-const httpsServer = https.createServer(httpsOptions, app);
-httpsServer.listen(httpsPort);
-httpsServer.on('error', onError);
-httpsServer.on('listening', onListening);
+/**
+ * Create HTTP server.
+ */
 
-httpServer.listen(httpPort);
+const server = http.createServer(app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  const port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
 
 function onError(error) {
   if (error.syscall !== 'listen') {
     throw error;
   }
 
-  const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port 8443';
+  const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
@@ -48,9 +75,12 @@ function onError(error) {
   }
 }
 
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
 function onListening() {
-  const addr = httpsServer.address();
-  const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port 8443';
+  const addr = server.address();
+  const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
-
