@@ -8,7 +8,7 @@ export const SNACKBAR_DURATION = 2000;
 export const TIMETABLE_DAYS = ['', '월', '화', '수', '목', '금'];
 export const MAX_PERIOD = 9;
 
-export const NOTIFICATION_POSTED_AT = new Date('2021-08-06');
+export const NOTIFICATION_POSTED_AT = new Date('2022-01-13');
 
 export const SEARCH_TABS = {
   SEARCH: '강의 검색',

@@ -23,7 +23,7 @@ export default function Footer() {
 
   return (
     <div className={classes.footer}>
-      Copyright ⓒ 2021.&nbsp;
+      Copyright ⓒ 2022.&nbsp;
       <a className={classes.zoomkoding} href="https://www.zoomkoding.com">
         zoomkoding
       </a>
