@@ -43,7 +43,7 @@ export default function NewSemesterModal({ open, onClose }) {
     <Modal className={classes.root} open={open} onClose={onClose}>
       <Paper className={classes.modal}>
         <Typography className={classes.titleText} variant="h3">
-          2021년도 2학기 서비스 안내{' '}
+          2022년도 1학기 서비스 안내{' '}
           <span role="img" aria-label="icon">
             🚀
           </span>
@@ -58,7 +58,7 @@ export default function NewSemesterModal({ open, onClose }) {
           <br />
           조금씩 다음 학기를 준비할 여러분을 위해
           <br />
-          2학기에도 대학시간을 서비스 하게 되었습니다!
+          1학기에도 대학시간을 서비스 하게 되었습니다!
           <br />
           <br />
           이삭줍기 서비스도 수강 신청이 시작되면
