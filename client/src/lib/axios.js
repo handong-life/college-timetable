@@ -12,7 +12,7 @@ export const Axios = () => {
   if (axiosContainer.instance === null || accessToken !== axiosContainer.key) {
     axiosContainer.key = accessToken;
     axiosContainer.instance = axios.create({
-      baseURL: `${process.env.REACT_APP_SERVER_URL}/api`,
+      baseURL: `${process.env.REACT_APP_SERVER_URL}`,
       headers: {
         'content-type': 'application/json',
         ...(accessToken && { authorization: `Bearer ${accessToken}` }),

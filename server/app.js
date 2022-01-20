@@ -28,7 +28,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(passport.initialize());
 passportConfig();
 
-app.use('/api', router);
+app.use('/', router);
 app.use(errorMiddleware);
 
 module.exports = app;
