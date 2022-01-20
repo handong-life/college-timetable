@@ -23,8 +23,8 @@ import {
   Modal,
   SearchSection,
   Snackbar,
-  SpikeIntroductionModal,
   TimetableSection,
+  NewSemesterModal,
 } from '../components';
 import { useUser, useSearch, useSnackbar, useModal } from '../hooks';
 
@@ -303,7 +303,7 @@ export default function HomePage({ logout }) {
       <Snackbar {...{ ...snackbarState, onClose: closeSnackBar }} />
       <Footer />
       <Modal {...{ ...modalState, onClose: closeModal }} />
-      <SpikeIntroductionModal {...{ open: isNotiModalOpen, onClose: closeNotiModal }} />
+      <NewSemesterModal {...{ open: isNotiModalOpen, onClose: closeNotiModal }} />
     </Box>
   );
 }
