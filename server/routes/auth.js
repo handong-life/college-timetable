@@ -18,7 +18,7 @@ router.get(
   passport.authenticate('google', { failureRedirect: '/auth', session: false }),
   function (req, res) {
     const accessToken = JWT.sign({ userId: req.user.id }, process.env.JWT_SECRET);
-    res.cookie('accessToken', accessToken).redirect('/');
+    res.cookie('accessToken', accessToken).redirect(process.env.GOOGLE_REDIRECT_URL);
   },
 );
 
