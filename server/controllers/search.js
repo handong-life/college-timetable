@@ -19,41 +19,38 @@ exports.getSearchResults = async (req, res) => {
 
   // Get spike information
   const lecturesWithCount = await Promise.all(
-    lectures.map(
-      async (lec) =>
-        new Promise(async (res) => {
-          const [add, bookmark, spike] = await Promise.all([
-            // Add
-            Timetable.count({
-              include: {
-                model: Lecture,
-                where: {
-                  id: lec.id,
-                },
-              },
-              distinct: true,
-              col: 'userId',
-            }),
-            // Bookmark
-            UserLectureRelation.count({
-              where: { lectureId: lec.id },
-            }),
-            // Spike
-            UserLectureGleaningRelation.count({
-              where: { lectureId: lec.id },
-            }),
-          ]);
-
-          return res({
-            ...lec.dataValues,
-            count: {
-              add,
-              bookmark,
-              spike,
+    lectures.map(async (lec) => {
+      const [add, bookmark, spike] = await Promise.all([
+        // Add
+        Timetable.count({
+          include: {
+            model: Lecture,
+            where: {
+              id: lec.id,
             },
-          });
+          },
+          distinct: true,
+          col: 'userId',
         }),
-    ),
+        // Bookmark
+        UserLectureRelation.count({
+          where: { lectureId: lec.id },
+        }),
+        // Spike
+        UserLectureGleaningRelation.count({
+          where: { lectureId: lec.id },
+        }),
+      ]);
+
+      return {
+        ...lec.dataValues,
+        count: {
+          add,
+          bookmark,
+          spike,
+        },
+      };
+    }),
   );
 
   res.send({ pages: count === 0 ? 0 : Math.ceil(count / limit), lectures: lecturesWithCount });
