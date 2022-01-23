@@ -1,6 +1,8 @@
 import React from 'react';
 import { Box, Typography, makeStyles } from '@material-ui/core';
 
+const colorSet = ["#fd7f6f", "#7eb0d5", "#b2e061", "#bd7ebe", "#ffb55a", "#ffee65", "#beb9db", "#fdcce5", "#8bd3c7"];
+
 const useStyles = makeStyles((theme) => {
   return {
     root: {
@@ -29,7 +31,7 @@ const useStyles = makeStyles((theme) => {
   };
 });
 
-export default function LectureGrid({ lecture, handleDeleteClick, isHovered }) {
+export default function LectureGrid({ lecture, handleDeleteClick, colorIndex, isHovered }) {
   const classes = useStyles({ isHovered });
 
   return lecture ? (
@@ -37,13 +39,14 @@ export default function LectureGrid({ lecture, handleDeleteClick, isHovered }) {
       className={classes.root}
       id={lecture.id}
       key={lecture.id}
+      style={{ backgroundColor: colorSet[colorIndex%9] }}
       onClick={() => handleDeleteClick(lecture)}
     >
       <Typography className={classes.item} variant="body2">
         {lecture.name}
       </Typography>
       <Typography className={classes.item}>{lecture.professor}</Typography>
-      <Typography className={classes.item}>{lecture.period}</Typography>
+      <Typography className={classes.item}>{lecture.roomNo}</Typography>
       {/* <Box className={classes.hoverLayer}>
         <DeleteIcon style={{ color: 'rgba(0, 0, 0, 0.54)' }} />
       </Box> */}

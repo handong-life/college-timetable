@@ -166,6 +166,9 @@ export default function TimetableSection({
     </Box>
   );
 
+  var myMap = new Map();
+  var colorIndex = 0;
+
   return (
     <Box className={classes.root}>
       <Box className={classes.header}>
@@ -203,18 +206,22 @@ export default function TimetableSection({
             return <PeriodIndicator index={index} key={index} />;
 
           const period = getPeriod(index);
+          const lectureId = lecturesForTimetable[period]?.id;
+          if (lectureId && !myMap.has(lectureId))
+            myMap.set(lectureId, colorIndex++);
 
           return (
             <Box
               className={classes.periodGrid}
               key={index}
-              onMouseOver={() => setHoveredIndex(lecturesForTimetable[period]?.id || -1)}
+              onMouseOver={() => setHoveredIndex(lectureId || -1)}
             >
               <LectureGrid
                 lecture={lecturesForTimetable[period]}
                 handleDeleteClick={isSharePage ? undefined : handleDeleteLectureClick}
                 key={index}
-                isHovered={hoveredIndex === lecturesForTimetable[period]?.id}
+                colorIndex={myMap.get(lectureId)}
+                isHovered={hoveredIndex === lectureId}
               />
             </Box>
           );
