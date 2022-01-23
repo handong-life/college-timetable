@@ -15,6 +15,8 @@ const useStyles = makeStyles((theme) => {
       padding: '1px',
       overflow: 'hidden',
       cursor: 'pointer',
+      backgroundColor: (props) => (colorSet[props.colorIndex % 9]),
+      boxShadow: (props) => (props.isConnected ? '0px -3px 0px ' + colorSet[props.colorIndex % 9] : 'none'),
     },
 
     item: {
@@ -23,6 +25,7 @@ const useStyles = makeStyles((theme) => {
       textAlign: 'center',
       textOverflow: 'ellipsis',
       opacity: (props) => (props.isHovered ? 0.3 : 1),
+      display: (props) => (props.isConnected ? 'none' : 'block')
     },
 
     hoverLayer: {
@@ -31,15 +34,14 @@ const useStyles = makeStyles((theme) => {
   };
 });
 
-export default function LectureGrid({ lecture, handleDeleteClick, colorIndex, isHovered }) {
-  const classes = useStyles({ isHovered });
+export default function LectureGrid({ lecture, handleDeleteClick, colorIndex, isHovered, isConnected }) {
+  const classes = useStyles({ isHovered, isConnected, colorIndex });
 
   return lecture ? (
     <Box
       className={classes.root}
       id={lecture.id}
       key={lecture.id}
-      style={{ backgroundColor: colorSet[colorIndex%9] }}
       onClick={() => handleDeleteClick(lecture)}
     >
       <Typography className={classes.item} variant="body2">
