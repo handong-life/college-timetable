@@ -166,7 +166,7 @@ export default function TimetableSection({
     </Box>
   );
 
-  var myMap = new Map();
+  var mapForColor = new Map();
   var colorIndex = 0;
 
   return (
@@ -207,8 +207,13 @@ export default function TimetableSection({
 
           const period = getPeriod(index);
           const lectureId = lecturesForTimetable[period]?.id;
-          if (lectureId && !myMap.has(lectureId))
-            myMap.set(lectureId, colorIndex++);
+          var isConnected = false;
+          if (lectureId) {
+            if (lectureId && !mapForColor.has(lectureId))
+              mapForColor.set(lectureId, colorIndex++);
+            if (index > TIMETABLE_DAYS.length && lecturesForTimetable[getPeriod(index - TIMETABLE_DAYS.length)]?.id === lectureId)
+              isConnected = true;
+          }
 
           return (
             <Box
@@ -220,8 +225,9 @@ export default function TimetableSection({
                 lecture={lecturesForTimetable[period]}
                 handleDeleteClick={isSharePage ? undefined : handleDeleteLectureClick}
                 key={index}
-                colorIndex={myMap.get(lectureId)}
+                colorIndex={mapForColor.get(lectureId)}
                 isHovered={hoveredIndex === lectureId}
+                isConnected={isConnected}
               />
             </Box>
           );
