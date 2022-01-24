@@ -209,7 +209,7 @@ export default function TimetableSection({
           const lectureId = lecturesForTimetable[period]?.id;
           var isConnected = false;
           if (lectureId) {
-            if (lectureId && !mapForColor.has(lectureId))
+            if (!mapForColor.has(lectureId))
               mapForColor.set(lectureId, colorIndex++);
             if (index > TIMETABLE_DAYS.length && lecturesForTimetable[getPeriod(index - TIMETABLE_DAYS.length)]?.id === lectureId)
               isConnected = true;
