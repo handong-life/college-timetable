@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => {
       textAlign: 'center',
       textOverflow: 'ellipsis',
       opacity: (props) => (props.isHovered ? 0.3 : 1),
-      display: (props) => (props.isConnected ? 'none' : 'block')
+      display: (props) => (props.isConnected ? 'none' : 'block'),
     },
 
     hoverLayer: {
