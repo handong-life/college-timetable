@@ -84,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     width: '100%',
     height: '100%',
-    padding: '1px',
+    padding: '0px',
     borderBottom: '1px solid #eaedf1',
     borderRight: '1px solid #eaedf1',
   },
@@ -166,8 +166,8 @@ export default function TimetableSection({
     </Box>
   );
 
-  var mapForColor = new Map();
-  var colorIndex = 0;
+  let mapForColor = new Map();
+  let colorIndex = 0;
 
   return (
     <Box className={classes.root}>
@@ -207,7 +207,7 @@ export default function TimetableSection({
 
           const period = getPeriod(index);
           const lectureId = lecturesForTimetable[period]?.id;
-          var isConnected = false;
+          let isConnected = false;
           if (lectureId) {
             if (!mapForColor.has(lectureId))
               mapForColor.set(lectureId, colorIndex++);
