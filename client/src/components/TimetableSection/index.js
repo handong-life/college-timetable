@@ -8,7 +8,7 @@ import Tabs from '../Tabs';
 import TimetableButtonGroup from './TimetableButtonGroup';
 import LectureGrid from './LectureGrid';
 import { sum } from '../../utils/helper';
-import { TIMETABLE_DAYS, MAX_PERIOD } from '../../commons/constants';
+import { TIMETABLE_DAYS, MAX_PERIOD, TIMETABLE_COLORSET } from '../../commons/constants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -144,6 +144,9 @@ export default function TimetableSection({
   const lecturesForTimetable = getLecturesForTimetable(lectures);
   const [hoveredIndex, setHoveredIndex] = useState(-1);
 
+  const colorIndexByLectureId = {};
+  let colorIndex = 0;
+
   const PeriodIndicator = ({ index }) => {
     return (
       <Box className={classes.periodIndicator}>
@@ -166,8 +169,15 @@ export default function TimetableSection({
     </Box>
   );
 
-  let mapForColor = new Map();
-  let colorIndex = 0;
+  const getIsConnected = (index, lectureId) =>
+    index > TIMETABLE_DAYS.length &&
+    lecturesForTimetable[getPeriod(index - TIMETABLE_DAYS.length)]?.id === lectureId;
+
+  const getBgColor = (lectureId) => {
+    if (!(lectureId in colorIndexByLectureId))
+      colorIndexByLectureId[lectureId] = colorIndex++;
+    return TIMETABLE_COLORSET[colorIndexByLectureId[lectureId] % TIMETABLE_COLORSET.length];
+  };
 
   return (
     <Box className={classes.root}>
@@ -206,27 +216,21 @@ export default function TimetableSection({
             return <PeriodIndicator index={index} key={index} />;
 
           const period = getPeriod(index);
-          const lectureId = lecturesForTimetable[period]?.id;
-          let isConnected = false;
-          if (lectureId) {
-            if (!mapForColor.has(lectureId))
-              mapForColor.set(lectureId, colorIndex++);
-            if (index > TIMETABLE_DAYS.length && lecturesForTimetable[getPeriod(index - TIMETABLE_DAYS.length)]?.id === lectureId)
-              isConnected = true;
-          }
+          const isConnected = getIsConnected(index, lecturesForTimetable[period]?.id);
+          const bgColor = getBgColor(lecturesForTimetable[period]?.id);
 
           return (
             <Box
               className={classes.periodGrid}
               key={index}
-              onMouseOver={() => setHoveredIndex(lectureId || -1)}
+              onMouseOver={() => setHoveredIndex(lecturesForTimetable[period]?.id || -1)}
             >
               <LectureGrid
                 lecture={lecturesForTimetable[period]}
                 handleDeleteClick={isSharePage ? undefined : handleDeleteLectureClick}
                 key={index}
-                colorIndex={mapForColor.get(lectureId)}
-                isHovered={hoveredIndex === lectureId}
+                bgColor={bgColor}
+                isHovered={hoveredIndex === lecturesForTimetable[period]?.id}
                 isConnected={isConnected}
               />
             </Box>

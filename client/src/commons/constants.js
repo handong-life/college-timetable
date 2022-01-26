@@ -8,6 +8,8 @@ export const SNACKBAR_DURATION = 2000;
 export const TIMETABLE_DAYS = ['', '월', '화', '수', '목', '금'];
 export const MAX_PERIOD = 9;
 
+export const TIMETABLE_COLORSET = ["#eddcd2", "#fff1e6", "#fde2e4", "#fad2e1", "#c5dedd", "#dbe7e4", "#f0efeb", "#d6e2e9", "#bcd4e6", "#99c1de"];
+
 export const NOTIFICATION_POSTED_AT = new Date('2022-01-13');
 
 export const SEARCH_TABS = {
