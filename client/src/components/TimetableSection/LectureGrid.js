@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography, Tooltip, makeStyles, withStyles } from '@material-ui/core';
 
-// const colorSet = ["#fd7f6f", "#7eb0d5", "#b2e061", "#bd7ebe", "#ffb55a", "#ffee65", "#beb9db", "#fdcce5", "#8bd3c7"];
-// const colorSet = ["#fff1e6", "#fde2e4", "#fad2e1", "#eae4e9", "#99c1de", "#e2ece9", "#bee1e6", "#f0efeb", "#dfe7fd", "#cddafd"];
-const colorSet = ["#eddcd2", "#fff1e6", "#fde2e4", "#fad2e1", "#c5dedd", "#dbe7e4", "#f0efeb", "#d6e2e9", "#bcd4e6", "#99c1de"];
-// const colorSet = ["#f5c4bf", "#afded7", "#cbe5c4", "#f3d0bb", "#faedb7", "#f9dcb2", "#b9e5d0", "#c2d59e"]
-
 const useStyles = makeStyles((theme) => {
   return {
     root: {
