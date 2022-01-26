@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch, Case, Default } from 'react-if';
-import { Box, IconButton, Tooltip, Typography, makeStyles } from '@material-ui/core';
+import { Box, IconButton, Tooltip, Typography, makeStyles, Button } from '@material-ui/core';
 
 import BookmarkIcon from '@material-ui/icons/Bookmark';
 import AddIcon from '@material-ui/icons/Add';
@@ -67,6 +67,18 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 'auto',
     paddingRight: '10px',
   },
+
+  buttonItem: {
+    lineHeight: '100%',
+  },
+
+  buttonEndIcon: {
+    marginRight: '0',
+  },
+
+  countText: {
+    lineHeight: '100%',
+  },
 }));
 
 export default function LectureCard({
@@ -96,33 +108,45 @@ export default function LectureCard({
   const DefaultButtonGroup = () => {
     return (
       <Box className={classes.buttonGroup}>
-        <IconButton onClick={onAddClick}>
-          <Tooltip title="현재 시간표에 추가" arrow>
-            <AddIcon />
-          </Tooltip>
-        </IconButton>
-        <IconButton onClick={lecture.isBookmarked ? onUnbookmarkClick : onBookmarkClick}>
-          {lecture.isBookmarked ? (
-            <Tooltip title="즐겨찾기 삭제" arrow>
-              <BookmarkIcon />
-            </Tooltip>
-          ) : (
-            <Tooltip title="즐겨찾기 추가" arrow>
-              <BookmarkBorderIcon />
-            </Tooltip>
-          )}
-        </IconButton>
-        <IconButton onClick={lecture.isSpike ? onDeleteSpikeClick : onAddSpikeClick}>
-          {lecture.isSpike ? (
-            <Tooltip title="이삭 줍기에서 삭제" arrow>
-              <EcoIcon />
-            </Tooltip>
-          ) : (
-            <Tooltip title="이삭 줍기에서 추가" arrow>
-              <EcoOutlinedIcon />
-            </Tooltip>
-          )}
-        </IconButton>
+        <Tooltip title="현재 시간표에 추가" arrow>
+          <Button
+            className={classes.buttonItem}
+            classes={{ startIcon: classes.buttonEndIcon }}
+            onClick={onAddClick}
+            startIcon={<AddIcon />}
+          >
+            {/* <Typography className={classes.countText}>10</Typography> */}
+            <Box className={classes.countText}>
+              <Typography>10</Typography>
+            </Box>
+          </Button>
+        </Tooltip>
+        <Tooltip title={lecture.isBookmarked ? '즐겨찾기 삭제' : '즐겨찾기 추가'} arrow>
+          <Button
+            className={classes.buttonItem}
+            classes={{ startIcon: classes.buttonEndIcon }}
+            onClick={lecture.isBookmarked ? onUnbookmarkClick : onBookmarkClick}
+            startIcon={lecture.isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+          >
+            {/* <Typography className={classes.countText}>10</Typography> */}
+            <Box className={classes.countText}>
+              <Typography>10</Typography>
+            </Box>
+          </Button>
+        </Tooltip>
+        <Tooltip title={lecture.isSpike ? '이삭 줍기에서 삭제' : '이삭 줍기에서 추가'} arrow>
+          <Button
+            className={classes.buttonItem}
+            classes={{ startIcon: classes.buttonEndIcon }}
+            onClick={lecture.isSpike ? onDeleteSpikeClick : onAddSpikeClick}
+            startIcon={lecture.isSpike ? <EcoIcon /> : <EcoOutlinedIcon />}
+          >
+            {/* <Typography className={classes.countText}>10</Typography> */}
+            <Box className={classes.countText}>
+              <Typography>10</Typography>
+            </Box>
+          </Button>
+        </Tooltip>
       </Box>
     );
   };

@@ -2,7 +2,7 @@ import { Axios } from '../lib/axios';
 import { isIn } from '../utils/helper';
 
 export default class Lecture {
-  constructor(raw, bookmarks = [], spikes = []) {
+  constructor(raw, bookmarks = [], spikes = [], counts = {}) {
     this.id = raw.id;
     this.gubun = raw.gubun;
     this.code = raw.code;
