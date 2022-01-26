@@ -81,7 +81,7 @@ exports.deleteSpikeLecture = async (req, res) => {
   return res.json({
     msg: 'complete',
     count: {
-      spike: await bookmarkCount(lectureId),
+      spike: await spikeCount(lectureId),
     },
   });
 };
