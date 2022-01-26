@@ -221,7 +221,7 @@ export default function TimetableSection({
             <Box
               className={classes.periodGrid}
               key={index}
-              onMouseOver={() => setHoveredIndex(lectureId || -1)}
+              onMouseOver={() => setHoveredIndex(lecturesForTimetable[period]?.id || -1)}
             >
               <LectureGrid
                 lecture={lecturesForTimetable[period]}
