@@ -4,7 +4,7 @@ const Timetable = require('../models/timetable');
 const User = require('../models/user');
 const UserLectureRelation = require('../models/user_lecture_relation');
 const UserLectureGleaningRelation = require('../models/user_lecture_gleaning_relation');
-const { bookmarkCount, spikeCount } = require('../utils/counter_helper');
+const { bookmarkCount, spikeCount, addCount } = require('../utils/counter_helper');
 
 exports.getUser = async (req, res) => {
   await User.update(
@@ -15,15 +15,37 @@ exports.getUser = async (req, res) => {
     { where: { id: req.user.id } },
   );
 
-  const user = await User.findOne({
-    where: { id: req.user.id },
-    include: [
-      { as: 'bookmarks', model: Lecture },
-      { as: 'spikes', model: Lecture },
-      { model: Timetable, include: Lecture },
-    ],
+  const user = (
+    await User.findOne({
+      where: { id: req.user.id },
+      include: [
+        { as: 'bookmarks', model: Lecture },
+        { as: 'spikes', model: Lecture },
+        { model: Timetable, include: Lecture },
+      ],
+    })
+  ).toJSON();
+
+  res.json({
+    ...user,
+    bookmarks: await Promise.all(
+      user.bookmarks.map(async (lec) => {
+        const [add, bookmark, spike] = await Promise.all([
+          addCount(lec.id),
+          bookmarkCount(lec.id),
+          spikeCount(lec.id),
+        ]);
+        return {
+          ...lec,
+          count: {
+            add,
+            bookmark,
+            spike,
+          },
+        };
+      }),
+    ),
   });
-  res.send(user);
 };
 
 exports.bookmarkLecture = async (req, res) => {
