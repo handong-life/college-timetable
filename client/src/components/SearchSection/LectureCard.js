@@ -117,7 +117,7 @@ export default function LectureCard({
           >
             {/* <Typography className={classes.countText}>10</Typography> */}
             <Box className={classes.countText}>
-              <Typography>10</Typography>
+              <Typography>{lecture.count?.add || ''}</Typography>
             </Box>
           </Button>
         </Tooltip>
@@ -130,7 +130,7 @@ export default function LectureCard({
           >
             {/* <Typography className={classes.countText}>10</Typography> */}
             <Box className={classes.countText}>
-              <Typography>10</Typography>
+              <Typography>{lecture.count?.bookmark || ''}</Typography>
             </Box>
           </Button>
         </Tooltip>
@@ -143,7 +143,7 @@ export default function LectureCard({
           >
             {/* <Typography className={classes.countText}>10</Typography> */}
             <Box className={classes.countText}>
-              <Typography>10</Typography>
+              <Typography>{lecture.count?.spike || ''}</Typography>
             </Box>
           </Button>
         </Tooltip>

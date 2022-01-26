@@ -31,6 +31,20 @@ function searchReducer(state, { type, payload }) {
       };
     }
 
+    case SEARCH_ACTIONS.REFLECT_COUNTS: {
+      const { lectureId, count } = payload;
+      const { searchResults } = state;
+      const idx = searchResults.findIndex((lecture) => lecture.id === lectureId);
+      if (idx === -1) return state; // 못 찾으면 더 이상 진행 안함
+
+      searchResults[idx] = new Lecture(searchResults[idx]).updateCount(count);
+
+      return {
+        ...state,
+        searchResults,
+      };
+    }
+
     default:
       return state;
   }

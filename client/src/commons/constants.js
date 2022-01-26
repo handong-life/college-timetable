@@ -34,6 +34,7 @@ export const SEARCH_ACTIONS = {
   START_SEARCH: 'startSearch',
   FINISH_SEARCH: 'finishSearch',
   REFLECT_BOOKMARKS: 'reflectBookmarks',
+  REFLECT_COUNTS: 'reflectCounts',
 };
 
 export const SNACKBAR_ACTIONS = {
