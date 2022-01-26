@@ -84,7 +84,6 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     width: '100%',
     height: '100%',
-    padding: '0px',
     borderBottom: '1px solid #eaedf1',
     borderRight: '1px solid #eaedf1',
   },
@@ -216,21 +215,22 @@ export default function TimetableSection({
             return <PeriodIndicator index={index} key={index} />;
 
           const period = getPeriod(index);
-          const isConnected = getIsConnected(index, lecturesForTimetable[period]?.id);
-          const bgColor = getBgColor(lecturesForTimetable[period]?.id);
+          const lectureId = lecturesForTimetable[period]?.id;
+          const isConnected = getIsConnected(index, lectureId);
+          const bgColor = getBgColor(lectureId);
 
           return (
             <Box
               className={classes.periodGrid}
               key={index}
-              onMouseOver={() => setHoveredIndex(lecturesForTimetable[period]?.id || -1)}
+              onMouseOver={() => setHoveredIndex(lectureId || -1)}
             >
               <LectureGrid
                 lecture={lecturesForTimetable[period]}
                 handleDeleteClick={isSharePage ? undefined : handleDeleteLectureClick}
                 key={index}
                 bgColor={bgColor}
-                isHovered={hoveredIndex === lecturesForTimetable[period]?.id}
+                isHovered={hoveredIndex === lectureId}
                 isConnected={isConnected}
               />
             </Box>
