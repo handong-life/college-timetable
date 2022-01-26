@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => {
 });
 
 export default function LectureGrid({ lecture, handleDeleteClick, bgColor, isHovered, isConnected }) {
-  const classes = useStyles({ isHovered, isConnected, bgColor });
+  const classes = useStyles({ bgColor, isHovered, isConnected });
 
   return lecture ? (
     <Box
