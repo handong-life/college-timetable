@@ -115,7 +115,6 @@ export default function LectureCard({
             onClick={onAddClick}
             startIcon={<AddIcon />}
           >
-            {/* <Typography className={classes.countText}>10</Typography> */}
             <Box className={classes.countText}>
               <Typography>{lecture.count?.add || ''}</Typography>
             </Box>
@@ -128,7 +127,6 @@ export default function LectureCard({
             onClick={lecture.isBookmarked ? onUnbookmarkClick : onBookmarkClick}
             startIcon={lecture.isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
           >
-            {/* <Typography className={classes.countText}>10</Typography> */}
             <Box className={classes.countText}>
               <Typography>{lecture.count?.bookmark || ''}</Typography>
             </Box>
@@ -141,7 +139,6 @@ export default function LectureCard({
             onClick={lecture.isSpike ? onDeleteSpikeClick : onAddSpikeClick}
             startIcon={lecture.isSpike ? <EcoIcon /> : <EcoOutlinedIcon />}
           >
-            {/* <Typography className={classes.countText}>10</Typography> */}
             <Box className={classes.countText}>
               <Typography>{lecture.count?.spike || ''}</Typography>
             </Box>
