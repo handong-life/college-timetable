@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Typography, Tooltip, Fade, makeStyles, withStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => {
@@ -49,6 +49,7 @@ const LectureInfoTooltip = withStyles((theme) => {
 })(Tooltip);
 
 export default function LectureGrid({ lecture, handleDeleteClick, bgColor, isHovered, isConnected }) {
+  const [isHover, setIsHover] = useState(false);
   const classes = useStyles({ bgColor, isHovered, isConnected });
 
   return lecture ? (
@@ -64,13 +65,16 @@ export default function LectureGrid({ lecture, handleDeleteClick, bgColor, isHov
       TransitionComponent={Fade}
       TransitionProps={{ timeout: 300 }}
       arrow
-      placement="top"
+      placement="bottom"
+      open={!isConnected && isHover}
     >
       <Box
         className={classes.root}
         id={lecture.id}
         key={lecture.id}
         onClick={() => handleDeleteClick(lecture)}
+        onMouseOver={() => setIsHover(true)}
+        onMouseLeave={() => setIsHover(false)}
       >
         <Typography className={classes.item} variant="body2">
           {lecture.name}
