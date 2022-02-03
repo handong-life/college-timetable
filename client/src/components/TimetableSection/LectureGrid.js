@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography, Tooltip, Fade, makeStyles, withStyles } from '@material-ui/core';
+import { Box, Typography, Tooltip, makeStyles, withStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -62,8 +62,6 @@ export default function LectureGrid({ lecture, handleDeleteClick, bgColor, isHov
           <Typography>PF 변경: {lecture.pfPossible ? "가능" : "불가능"}</Typography>
         </React.Fragment>
       }
-      TransitionComponent={Fade}
-      TransitionProps={{ timeout: 300 }}
       arrow
       placement="bottom"
       open={!isConnected && isHover}
