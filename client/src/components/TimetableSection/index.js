@@ -216,8 +216,6 @@ export default function TimetableSection({
 
           const period = getPeriod(index);
           const lectureId = lecturesForTimetable[period]?.id;
-          const isConnected = getIsConnected(index, lectureId);
-          const bgColor = getBgColor(lectureId);
 
           return (
             <Box
@@ -229,9 +227,9 @@ export default function TimetableSection({
                 lecture={lecturesForTimetable[period]}
                 handleDeleteClick={isSharePage ? undefined : handleDeleteLectureClick}
                 key={index}
-                bgColor={bgColor}
+                bgColor={getBgColor(lectureId)}
                 isHovered={hoveredIndex === lectureId}
-                isConnected={isConnected}
+                isConnected={getIsConnected(index, lectureId)}
               />
             </Box>
           );
