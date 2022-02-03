@@ -19,8 +19,8 @@ export default class Lecture {
     this.grading = raw.grading;
     this.pfPossible = raw.pfPossible;
     this.crawledAt = raw.crawledAt;
-    this.isBookmarked = raw.isBookmarked || isIn(raw, bookmarks, 'id');
-    this.isSpike = raw.isSpike || isIn(raw, spikes, 'id');
+    this.isBookmarked = isIn(raw, bookmarks, 'id');
+    this.isSpike = isIn(raw, spikes, 'id');
     this.isAdded = false;
     this.count = raw.count;
   }
