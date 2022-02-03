@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, makeStyles } from '@material-ui/core';
+import { Box, Typography, Tooltip, Fade, makeStyles, withStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -32,25 +32,56 @@ const useStyles = makeStyles((theme) => {
   };
 });
 
+const LectureInfoTooltip = withStyles((theme) => {
+  return {
+    arrow: {
+      "&:before": {
+        border: '1px solid #eaedf1',
+      },
+      color: 'white',
+    },
+    tooltip: {
+      backgroundColor: 'white',
+      border: '1px solid #eaedf1',
+      color: theme.palette.text.primary,
+    }
+  };
+})(Tooltip);
+
 export default function LectureGrid({ lecture, handleDeleteClick, bgColor, isHovered, isConnected }) {
   const classes = useStyles({ bgColor, isHovered, isConnected });
 
   return lecture ? (
-    <Box
-      className={classes.root}
-      id={lecture.id}
-      key={lecture.id}
-      onClick={() => handleDeleteClick(lecture)}
+    <LectureInfoTooltip
+      title={
+        <React.Fragment>
+          <Typography>학점: {lecture.credit}</Typography>
+          <Typography>영어비율: {lecture.english}</Typography>
+          <Typography>성적유형: {lecture.grading}</Typography>
+          <Typography>PF 변경: {lecture.pfPossible ? "가능" : "불가능"}</Typography>
+        </React.Fragment>
+      }
+      TransitionComponent={Fade}
+      TransitionProps={{ timeout: 300 }}
+      arrow
+      placement="top"
     >
-      <Typography className={classes.item} variant="body2">
-        {lecture.name}
-      </Typography>
-      <Typography className={classes.item}>{lecture.professor}</Typography>
-      <Typography className={classes.item}>{lecture.roomNo}</Typography>
-      {/* <Box className={classes.hoverLayer}>
+      <Box
+        className={classes.root}
+        id={lecture.id}
+        key={lecture.id}
+        onClick={() => handleDeleteClick(lecture)}
+      >
+        <Typography className={classes.item} variant="body2">
+          {lecture.name}
+        </Typography>
+        <Typography className={classes.item}>{lecture.professor}</Typography>
+        <Typography className={classes.item}>{lecture.roomNo}</Typography>
+        {/* <Box className={classes.hoverLayer}>
         <DeleteIcon style={{ color: 'rgba(0, 0, 0, 0.54)' }} />
       </Box> */}
-    </Box>
+      </Box>
+    </LectureInfoTooltip>
   ) : (
     <></>
   );
