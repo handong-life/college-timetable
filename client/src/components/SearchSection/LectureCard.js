@@ -1,13 +1,8 @@
 import React from 'react';
 import { Switch, Case, Default } from 'react-if';
 import { Box, IconButton, Tooltip, Typography, makeStyles, Button } from '@material-ui/core';
-
-import BookmarkIcon from '@material-ui/icons/Bookmark';
-import AddIcon from '@material-ui/icons/Add';
+import classNames from 'classnames';
 import DeleteIcon from '@material-ui/icons/Delete';
-import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
-import EcoOutlinedIcon from '@material-ui/icons/EcoOutlined';
-import EcoIcon from '@material-ui/icons/Eco';
 import { SEARCH_TABS } from '../../commons/constants';
 
 const useStyles = makeStyles((theme) => ({
@@ -69,15 +64,31 @@ const useStyles = makeStyles((theme) => ({
   },
 
   buttonItem: {
+    display: 'flex',
+    alignItems: 'center',
+    border: '1px solid #efefef',
+    borderRadius: 15,
+    padding: '2px 12px 0 14px',
+    minWidth: 0,
+    height: 30,
+    fontSize: '1rem',
+  },
+
+  buttonIcon: {
+    marginRight: 5,
+    fontSize: 20,
     lineHeight: '100%',
   },
 
-  buttonEndIcon: {
-    marginRight: '0',
+  selectedButton: {
+    background: '#e1eef3',
+    color: '#269ed2',
+    fontWeight: 800,
+    border: '2px solid #269ed2',
   },
 
   countText: {
-    lineHeight: '100%',
+    verticalAlign: 'center',
   },
 }));
 
@@ -110,38 +121,43 @@ export default function LectureCard({
       <Box className={classes.buttonGroup}>
         <Tooltip title="현재 시간표에 추가" arrow>
           <Button
-            className={classes.buttonItem}
-            classes={{ startIcon: classes.buttonEndIcon }}
+            className={classNames({
+              [classes.buttonItem]: true,
+              [classes.selectedButton]: false,
+            })}
+            classes={{ startIcon: classes.buttonIcon }}
             onClick={onAddClick}
-            startIcon={<AddIcon />}
+            startIcon="🗓"
           >
-            <Box className={classes.countText}>
-              <Typography>{lecture.count?.add || ''}</Typography>
-            </Box>
+            <Box className={classes.countText}>{lecture.count?.add}</Box>
           </Button>
         </Tooltip>
         <Tooltip title={lecture.isBookmarked ? '즐겨찾기 삭제' : '즐겨찾기 추가'} arrow>
           <Button
-            className={classes.buttonItem}
-            classes={{ startIcon: classes.buttonEndIcon }}
+            className={classNames({
+              [classes.buttonItem]: true,
+              [classes.selectedButton]: lecture.isBookmarked,
+            })}
+            classes={{ startIcon: classes.buttonIcon }}
             onClick={lecture.isBookmarked ? onUnbookmarkClick : onBookmarkClick}
-            startIcon={lecture.isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+            startIcon="⭐️"
           >
             <Box className={classes.countText}>
-              <Typography>{lecture.count?.bookmark || ''}</Typography>
+              <Typography variant="body2">{lecture.count?.bookmark}</Typography>
             </Box>
           </Button>
         </Tooltip>
         <Tooltip title={lecture.isSpike ? '이삭 줍기에서 삭제' : '이삭 줍기에서 추가'} arrow>
           <Button
             className={classes.buttonItem}
-            classes={{ startIcon: classes.buttonEndIcon }}
+            className={classNames({
+              [classes.buttonItem]: true,
+              [classes.selectedButton]: lecture.isSpike,
+            })}
             onClick={lecture.isSpike ? onDeleteSpikeClick : onAddSpikeClick}
-            startIcon={lecture.isSpike ? <EcoIcon /> : <EcoOutlinedIcon />}
+            startIcon="🍃"
           >
-            <Box className={classes.countText}>
-              <Typography>{lecture.count?.spike || ''}</Typography>
-            </Box>
+            <Box className={classes.countText}>{lecture.count?.spike}</Box>
           </Button>
         </Tooltip>
       </Box>
