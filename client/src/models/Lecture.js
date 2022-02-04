@@ -24,8 +24,9 @@ export default class Lecture {
     this.isAdded = false;
     this.count = {
       ...raw.count,
-      bookmark: bookmarks.find(({ id }) => id === this.id)?.count?.bookmark || 0,
-      spike: spikes.find(({ id }) => id === this.id)?.count?.spike || 0,
+      bookmark:
+        bookmarks.find(({ id }) => id === this.id)?.count?.bookmark || raw?.count?.bookmark || 0,
+      spike: spikes.find(({ id }) => id === this.id)?.count?.spike || raw?.count?.spike || 0,
     };
     console.log(this);
   }
