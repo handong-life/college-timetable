@@ -22,7 +22,9 @@ function searchReducer(state, { type, payload }) {
       const { search, lectures, page, pages, bookmarks, spikes } = payload;
       return {
         search,
-        searchResults: lectures.map((lecture) => new Lecture(lecture, bookmarks, spikes)),
+        searchResults: lectures.map((lecture) =>
+          new Lecture(lecture, bookmarks, spikes).updateCount(lecture.count),
+        ),
         searchLoading: false,
         pagination: {
           total: pages,
