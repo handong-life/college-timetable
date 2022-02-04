@@ -149,7 +149,6 @@ export default function LectureCard({
         </Tooltip>
         <Tooltip title={lecture.isSpike ? '이삭 줍기에서 삭제' : '이삭 줍기에서 추가'} arrow>
           <Button
-            className={classes.buttonItem}
             className={classNames({
               [classes.buttonItem]: true,
               [classes.selectedButton]: lecture.isSpike,
