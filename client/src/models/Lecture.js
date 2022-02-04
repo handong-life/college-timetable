@@ -22,7 +22,12 @@ export default class Lecture {
     this.isBookmarked = isIn(raw, bookmarks, 'id');
     this.isSpike = isIn(raw, spikes, 'id');
     this.isAdded = false;
-    this.count = raw.count;
+    this.count = {
+      ...raw.count,
+      bookmark: bookmarks.find(({ id }) => id === this.id)?.count?.bookmark || 0,
+      spike: spikes.find(({ id }) => id === this.id)?.count?.spike || 0,
+    };
+    console.log(this);
   }
 
   static getSearchResults = async (search, page) =>
@@ -39,7 +44,7 @@ export default class Lecture {
 
 export class BookmarkedLecture extends Lecture {
   constructor(raw, spikes) {
-    return super({ ...raw, isBookmarked: true }, [], spikes);
+    return super({ ...raw, isBookmarked: true }, [raw], spikes);
   }
 }
 
