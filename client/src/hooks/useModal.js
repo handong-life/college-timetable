@@ -93,6 +93,18 @@ function searchReducer(state, { type, payload }) {
       });
     }
 
+    case MODAL_ACTIONS.OPEN_SUBMIT_CONFIRM_MODAL: {
+      const { onSubmit } = payload;
+      return getOpenModalState({
+        onSubmit,
+        isInputRequired: false,
+        text: {
+          title: `소중한 의견 감사합니다! 빠른 시일 내에 반영하도록 하겠습니다 😊`,
+          button: '확인',
+        },
+      });
+    }
+
     default:
       return state;
   }

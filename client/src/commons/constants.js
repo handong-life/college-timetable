@@ -55,4 +55,5 @@ export const MODAL_ACTIONS = {
   OPEN_EDIT_TIMETABLE_MODAL: 'openEditTimetableModal',
   OPEN_SHARE_TIMETABLE_MODAL: 'openShareTimetableModal',
   OPEN_FEEDBACK_MODAL: 'openFeedbackModal',
+  OPEN_SUBMIT_CONFIRM_MODAL: 'openSubmitConfirmModal',
 };
