@@ -170,6 +170,12 @@ export default function HomePage({ logout }) {
       payload: { onSubmit: handleFeedbackReport },
     });
 
+  const openSubmitConfirmModal = () =>
+    modalDispatch({
+      type: MODAL_ACTIONS.OPEN_SUBMIT_CONFIRM_MODAL,
+      payload: { onSubmit: handleSubmit },
+    });
+
   const openEditTimetableModal = () => {
     if (timetables.length === 0)
       return snackbarDispatch({ type: SNACKBAR_ACTIONS.ALERT_NO_EDITABLE_TIMETABLE });
@@ -258,7 +264,11 @@ export default function HomePage({ logout }) {
   };
 
   const handleFeedbackReport = (feedback) => {
-    User.reportFeedback(feedback).then(() => closeModal());
+    User.reportFeedback(feedback).then(() => openSubmitConfirmModal());
+  };
+
+  const handleSubmit = () => {
+    closeModal();
   };
 
   return (
