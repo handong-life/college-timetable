@@ -55,12 +55,12 @@ export default function LectureGrid({ lecture, handleDeleteClick, bgColor, isHov
   return lecture ? (
     <LectureInfoTooltip
       title={
-        <React.Fragment>
+        <>
           <Typography>학점: {lecture.credit}</Typography>
           <Typography>영어비율: {lecture.english}</Typography>
           <Typography>성적유형: {lecture.grading}</Typography>
           <Typography>PF 변경: {lecture.pfPossible ? "가능" : "불가능"}</Typography>
-        </React.Fragment>
+        </>
       }
       arrow
       placement="bottom"
