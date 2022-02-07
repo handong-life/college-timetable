@@ -2,16 +2,26 @@ const app = require('../app');
 const https = require('https');
 const http = require('http');
 const fs = require('fs');
+const hostname = 'timetable.handong.life';
+
+if (process.env.NODE_ENV === 'development') {
+  const httpServer = http.createServer(app);
+  httpServer.listen(process.env.PORT || 3000, () => {
+    console.log('HTTP Server running on port', process.env.PORT || 80);
+  });
+  return;
+}
 
 // Starting http server
-const httpServer = http.createServer(app);
+const httpServer = http.createServer((req, res) => {
+  res.statusCode = 301;
+  res.setHeader('Location', `https://${hostname}${req.url}`);
+  res.end(); // make sure to call send() or end() to send the response
+});
 
 httpServer.listen(process.env.PORT || 80, () => {
   console.log('HTTP Server running on port', process.env.PORT || 80);
 });
-
-// No https server for dev mode
-if (process.env.NODE_ENV === 'development') return;
 
 // Certificate
 const privateKey = fs.readFileSync(`${process.env.SSL_CERTIFICATE_PATH}/privkey.pem`, 'utf8');
