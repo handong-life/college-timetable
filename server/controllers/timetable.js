@@ -1,6 +1,7 @@
 const Lecture = require('../models/lecture');
 const Timetable = require('../models/timetable');
 const TimetableLectureRelation = require('../models/timetable_lecture_relation');
+const { addCount } = require('../utils/counter_helper');
 
 exports.getTimetable = async (req, res) => {
   const timetable = await Timetable.findOne({
@@ -39,7 +40,12 @@ exports.addLecture = async (req, res) => {
     timetableId: +timetableId,
     lectureId: +lectureId,
   });
-  res.send('complete');
+  return res.json({
+    msg: 'complete',
+    count: {
+      add: await addCount(+lectureId),
+    },
+  });
 };
 
 exports.deleteLecture = async (req, res) => {
@@ -50,5 +56,10 @@ exports.deleteLecture = async (req, res) => {
       lectureId: +lectureId,
     },
   });
-  res.send('complete');
+  return res.json({
+    msg: 'complete',
+    count: {
+      add: await addCount(lectureId),
+    },
+  });
 };

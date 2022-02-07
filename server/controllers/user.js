@@ -4,6 +4,7 @@ const Timetable = require('../models/timetable');
 const User = require('../models/user');
 const UserLectureRelation = require('../models/user_lecture_relation');
 const UserLectureGleaningRelation = require('../models/user_lecture_gleaning_relation');
+const { bookmarkCount, spikeCount, addCount } = require('../utils/counter_helper');
 
 exports.getUser = async (req, res) => {
   await User.update(
@@ -14,51 +15,97 @@ exports.getUser = async (req, res) => {
     { where: { id: req.user.id } },
   );
 
-  const user = await User.findOne({
-    where: { id: req.user.id },
-    include: [
-      { as: 'bookmarks', model: Lecture },
-      { as: 'spikes', model: Lecture },
-      { model: Timetable, include: Lecture },
-    ],
+  const user = (
+    await User.findOne({
+      where: { id: req.user.id },
+      include: [
+        { as: 'bookmarks', model: Lecture },
+        { as: 'spikes', model: Lecture },
+        { model: Timetable, include: Lecture },
+      ],
+    })
+  ).toJSON();
+
+  res.json({
+    ...user,
+    bookmarks: await Promise.all(
+      user.bookmarks.map(async (lec) => {
+        const [add, bookmark, spike] = await Promise.all([
+          addCount(lec.id),
+          bookmarkCount(lec.id),
+          spikeCount(lec.id),
+        ]);
+        return {
+          ...lec,
+          count: {
+            add,
+            bookmark,
+            spike,
+          },
+        };
+      }),
+    ),
   });
-  res.send(user);
 };
 
 exports.bookmarkLecture = async (req, res) => {
+  const lectureId = +req.params.lectureId;
   await UserLectureRelation.create({
     userId: req.user.id,
-    lectureId: +req.params.lectureId,
+    lectureId,
   });
-  res.send('complete');
+  return res.json({
+    msg: 'complete',
+    count: {
+      bookmark: await bookmarkCount(lectureId),
+    },
+  });
 };
 
 exports.unbookmarkLecture = async (req, res) => {
+  const lectureId = +req.params.lectureId;
   await UserLectureRelation.destroy({
     where: {
       userId: req.user.id,
-      lectureId: +req.params.lectureId,
+      lectureId,
     },
   });
-  res.send('complete');
+  return res.json({
+    msg: 'complete',
+    count: {
+      bookmark: await bookmarkCount(lectureId),
+    },
+  });
 };
 
 exports.addSpikeLecture = async (req, res) => {
+  const lectureId = +req.params.lectureId;
   await UserLectureGleaningRelation.create({
     userId: req.user.id,
-    lectureId: +req.params.lectureId,
+    lectureId,
   });
-  res.send('complete');
+  return res.json({
+    msg: 'complete',
+    count: {
+      spike: await spikeCount(lectureId),
+    },
+  });
 };
 
 exports.deleteSpikeLecture = async (req, res) => {
+  const lectureId = +req.params.lectureId;
   await UserLectureGleaningRelation.destroy({
     where: {
       userId: req.user.id,
-      lectureId: +req.params.lectureId,
+      lectureId,
     },
   });
-  res.send('complete');
+  return res.json({
+    msg: 'complete',
+    count: {
+      spike: await spikeCount(lectureId),
+    },
+  });
 };
 
 exports.getBookmarks = async (req, res) => {

@@ -22,26 +22,41 @@ export default class Lecture {
     this.isBookmarked = isIn(raw, bookmarks, 'id');
     this.isSpike = isIn(raw, spikes, 'id');
     this.isAdded = false;
+    this.count = {
+      ...raw.count,
+      bookmark:
+        bookmarks.find(({ id }) => id === this.id)?.count?.bookmark || raw?.count?.bookmark || 0,
+      spike: spikes.find(({ id }) => id === this.id)?.count?.spike || raw?.count?.spike || 0,
+    };
+    console.log(this);
   }
 
   static getSearchResults = async (search, page) =>
     await Axios().get(`/search?search=${search}${page ? `&page=${page}` : ''}`);
+
+  updateCount(count) {
+    this.count = {
+      ...this.count,
+      ...count,
+    };
+    return this;
+  }
 }
 
 export class BookmarkedLecture extends Lecture {
   constructor(raw, spikes) {
-    return { ...super(raw, [], spikes), isBookmarked: true };
+    return super({ ...raw, isBookmarked: true }, [raw], spikes);
   }
 }
 
 export class TimetableLecture extends Lecture {
   constructor(raw) {
-    return { ...super(raw), isAdded: true };
+    return super({ ...raw, isAdded: true });
   }
 }
 
 export class SpikeLecture extends Lecture {
   constructor(raw) {
-    return { ...super(raw), isSpike: true };
+    return super({ ...raw, isSpike: true });
   }
 }

@@ -22,12 +22,28 @@ function searchReducer(state, { type, payload }) {
       const { search, lectures, page, pages, bookmarks, spikes } = payload;
       return {
         search,
-        searchResults: lectures.map((lecture) => new Lecture(lecture, bookmarks, spikes)),
+        searchResults: lectures.map((lecture) =>
+          new Lecture(lecture, bookmarks, spikes).updateCount(lecture.count),
+        ),
         searchLoading: false,
         pagination: {
           total: pages,
           current: pages === 0 ? 0 : page,
         },
+      };
+    }
+
+    case SEARCH_ACTIONS.REFLECT_COUNTS: {
+      const { lectureId, count } = payload;
+      const { searchResults } = state;
+      const idx = searchResults.findIndex((lecture) => lecture.id === lectureId);
+      if (idx === -1) return state; // 못 찾으면 더 이상 진행 안함
+
+      searchResults[idx] = new Lecture(searchResults[idx]).updateCount(count);
+
+      return {
+        ...state,
+        searchResults,
       };
     }
 

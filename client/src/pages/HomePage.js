@@ -92,7 +92,11 @@ export default function HomePage({ logout }) {
     User.addSpikeLecture(lecture.id).then((res) => {
       userDispatch({
         type: USER_ACTIONS.ADD_SPIKE_LECTURE,
-        payload: { lecture: new SpikeLecture(lecture) },
+        payload: { lecture: new SpikeLecture(lecture).updateCount(res.data.count) },
+      });
+      searchDispatch({
+        type: SEARCH_ACTIONS.REFLECT_COUNTS,
+        payload: { lectureId: lecture.id, count: res.data.count },
       });
     });
   };
@@ -103,6 +107,10 @@ export default function HomePage({ logout }) {
         type: USER_ACTIONS.DELETE_SPIKE_LECTURE,
         payload: { lectureId: lecture.id },
       });
+      searchDispatch({
+        type: SEARCH_ACTIONS.REFLECT_COUNTS,
+        payload: { lectureId: lecture.id, count: res.data.count },
+      });
     });
   };
 
@@ -110,7 +118,11 @@ export default function HomePage({ logout }) {
     User.bookmarkLecture(lecture.id).then((res) => {
       userDispatch({
         type: USER_ACTIONS.BOOKMARK_LECTURE,
-        payload: { lecture: new BookmarkedLecture(lecture) },
+        payload: { lecture: new BookmarkedLecture(lecture).updateCount(res.data.count) },
+      });
+      searchDispatch({
+        type: SEARCH_ACTIONS.REFLECT_COUNTS,
+        payload: { lectureId: lecture.id, count: res.data.count },
       });
     });
   };
@@ -120,6 +132,10 @@ export default function HomePage({ logout }) {
       userDispatch({
         type: USER_ACTIONS.UNBOOKMARK_LECTURE,
         payload: { lectureId: lecture.id },
+      });
+      searchDispatch({
+        type: SEARCH_ACTIONS.REFLECT_COUNTS,
+        payload: { lectureId: lecture.id, count: res.data.count },
       });
     });
   };
@@ -142,7 +158,14 @@ export default function HomePage({ logout }) {
     Timetable.addLecture(timetableId, lecture.id).then((res) => {
       userDispatch({
         type: USER_ACTIONS.ADD_LECTURE_TO_TIMETABLE,
-        payload: { timetableId, lecture: new TimetableLecture(lecture) },
+        payload: {
+          timetableId,
+          lecture: new TimetableLecture(lecture).updateCount(res.data.count),
+        },
+      });
+      searchDispatch({
+        type: SEARCH_ACTIONS.REFLECT_COUNTS,
+        payload: { lectureId: lecture.id, count: res.data.count },
       });
     });
   };
@@ -153,6 +176,10 @@ export default function HomePage({ logout }) {
       userDispatch({
         type: USER_ACTIONS.DELETE_LECTURE_FROM_TIMETABLE,
         payload: { timetableId, lectureId },
+      });
+      searchDispatch({
+        type: SEARCH_ACTIONS.REFLECT_COUNTS,
+        payload: { lectureId, count: res.data.count },
       });
       closeModal();
     });

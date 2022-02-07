@@ -1,13 +1,8 @@
 import React from 'react';
 import { Switch, Case, Default } from 'react-if';
-import { Box, IconButton, Tooltip, Typography, makeStyles } from '@material-ui/core';
-
-import BookmarkIcon from '@material-ui/icons/Bookmark';
-import AddIcon from '@material-ui/icons/Add';
+import { Box, IconButton, Tooltip, Typography, makeStyles, Button } from '@material-ui/core';
+import classNames from 'classnames';
 import DeleteIcon from '@material-ui/icons/Delete';
-import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
-import EcoOutlinedIcon from '@material-ui/icons/EcoOutlined';
-import EcoIcon from '@material-ui/icons/Eco';
 import { SEARCH_TABS } from '../../commons/constants';
 
 const useStyles = makeStyles((theme) => ({
@@ -67,6 +62,34 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 'auto',
     paddingRight: '10px',
   },
+
+  buttonItem: {
+    display: 'flex',
+    alignItems: 'center',
+    border: '1px solid #efefef',
+    borderRadius: 15,
+    padding: '2px 12px 0 14px',
+    minWidth: 0,
+    height: 30,
+    fontSize: '1rem',
+  },
+
+  buttonIcon: {
+    marginRight: 5,
+    fontSize: 20,
+    lineHeight: '100%',
+  },
+
+  selectedButton: {
+    background: '#e1eef3',
+    color: '#269ed2',
+    fontWeight: 800,
+    border: '2px solid #269ed2',
+  },
+
+  countText: {
+    verticalAlign: 'center',
+  },
 }));
 
 export default function LectureCard({
@@ -96,33 +119,46 @@ export default function LectureCard({
   const DefaultButtonGroup = () => {
     return (
       <Box className={classes.buttonGroup}>
-        <IconButton onClick={onAddClick}>
-          <Tooltip title="현재 시간표에 추가" arrow>
-            <AddIcon />
-          </Tooltip>
-        </IconButton>
-        <IconButton onClick={lecture.isBookmarked ? onUnbookmarkClick : onBookmarkClick}>
-          {lecture.isBookmarked ? (
-            <Tooltip title="즐겨찾기 삭제" arrow>
-              <BookmarkIcon />
-            </Tooltip>
-          ) : (
-            <Tooltip title="즐겨찾기 추가" arrow>
-              <BookmarkBorderIcon />
-            </Tooltip>
-          )}
-        </IconButton>
-        <IconButton onClick={lecture.isSpike ? onDeleteSpikeClick : onAddSpikeClick}>
-          {lecture.isSpike ? (
-            <Tooltip title="이삭 줍기에서 삭제" arrow>
-              <EcoIcon />
-            </Tooltip>
-          ) : (
-            <Tooltip title="이삭 줍기에서 추가" arrow>
-              <EcoOutlinedIcon />
-            </Tooltip>
-          )}
-        </IconButton>
+        <Tooltip title="현재 시간표에 추가" arrow>
+          <Button
+            className={classNames({
+              [classes.buttonItem]: true,
+              [classes.selectedButton]: false,
+            })}
+            classes={{ startIcon: classes.buttonIcon }}
+            onClick={onAddClick}
+            startIcon="🗓"
+          >
+            <Box className={classes.countText}>{lecture.count?.add}</Box>
+          </Button>
+        </Tooltip>
+        <Tooltip title={lecture.isBookmarked ? '즐겨찾기 삭제' : '즐겨찾기 추가'} arrow>
+          <Button
+            className={classNames({
+              [classes.buttonItem]: true,
+              [classes.selectedButton]: lecture.isBookmarked,
+            })}
+            classes={{ startIcon: classes.buttonIcon }}
+            onClick={lecture.isBookmarked ? onUnbookmarkClick : onBookmarkClick}
+            startIcon="⭐️"
+          >
+            <Box className={classes.countText}>
+              <Typography variant="body2">{lecture.count?.bookmark}</Typography>
+            </Box>
+          </Button>
+        </Tooltip>
+        <Tooltip title={lecture.isSpike ? '이삭 줍기에서 삭제' : '이삭 줍기에서 추가'} arrow>
+          <Button
+            className={classNames({
+              [classes.buttonItem]: true,
+              [classes.selectedButton]: lecture.isSpike,
+            })}
+            onClick={lecture.isSpike ? onDeleteSpikeClick : onAddSpikeClick}
+            startIcon="🍃"
+          >
+            <Box className={classes.countText}>{lecture.count?.spike}</Box>
+          </Button>
+        </Tooltip>
       </Box>
     );
   };

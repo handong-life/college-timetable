@@ -3,6 +3,7 @@ const Search = require('../models/search');
 const Timetable = require('../models/timetable');
 const UserLectureGleaningRelation = require('../models/user_lecture_gleaning_relation');
 const UserLectureRelation = require('../models/user_lecture_relation');
+const { addCount, bookmarkCount, spikeCount } = require('../utils/counter_helper');
 const { searchWhereClause } = require('../utils/query_helper');
 
 exports.getSearchResults = async (req, res) => {
@@ -21,25 +22,9 @@ exports.getSearchResults = async (req, res) => {
   const lecturesWithCount = await Promise.all(
     lectures.map(async (lec) => {
       const [add, bookmark, spike] = await Promise.all([
-        // Add
-        Timetable.count({
-          include: {
-            model: Lecture,
-            where: {
-              id: lec.id,
-            },
-          },
-          distinct: true,
-          col: 'userId',
-        }),
-        // Bookmark
-        UserLectureRelation.count({
-          where: { lectureId: lec.id },
-        }),
-        // Spike
-        UserLectureGleaningRelation.count({
-          where: { lectureId: lec.id },
-        }),
+        addCount(lec.id),
+        bookmarkCount(lec.id),
+        spikeCount(lec.id),
       ]);
 
       return {
